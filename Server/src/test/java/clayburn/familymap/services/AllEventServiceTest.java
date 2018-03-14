@@ -1,13 +1,16 @@
 package clayburn.familymap.services;
 
-import clayburn.ServiceResponses.AllEventResponse;
+import clayburn.familymap.ServiceResponses.AllEventResponse;
 import clayburn.familymap.database.Database;
-import clayburn.model.AuthToken;
-import clayburn.model.Event;
-import clayburn.model.User;
+import clayburn.familymap.model.AuthToken;
+import clayburn.familymap.model.Event;
+import clayburn.familymap.model.User;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class AllEventServiceTest {
 

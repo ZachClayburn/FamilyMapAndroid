@@ -1,7 +1,6 @@
 package clayburn.familymap.database;
 
-import clayburn.model.Person;
-import clayburn.model.User;
+import clayburn.familymap.model.Person;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,8 +50,7 @@ class PersonDAOTest {
 
         try {
             db.getPersonDAO().addPersons(persons);
-            assertThrows(Database.DatabaseException.class,()->db.getPersonDAO().addPersons(duplicate),
-                    "[SQLITE_CONSTRAINT]  Abort due to constraint violation (column personID is not unique)");
+            assertThrows(Database.DatabaseException.class,()->db.getPersonDAO().addPersons(duplicate));
         } catch (Database.DatabaseException e) {
             fail(e);
         }

@@ -1,13 +1,9 @@
 package clayburn.familymap.services;
 
-import clayburn.ServiceRequests.LoginRequest;
-import clayburn.ServiceRequests.RegisterRequest;
-import clayburn.ServiceResponses.LoginResponse;
-import clayburn.ServiceResponses.RegisterResponse;
+import clayburn.familymap.ServiceRequests.RegisterRequest;
+import clayburn.familymap.ServiceResponses.RegisterResponse;
 import clayburn.familymap.database.Database;
-import clayburn.model.Event;
-import clayburn.model.Person;
-import clayburn.model.User;
+import clayburn.familymap.model.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

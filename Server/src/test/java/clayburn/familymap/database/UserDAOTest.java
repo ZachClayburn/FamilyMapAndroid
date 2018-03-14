@@ -1,6 +1,6 @@
 package clayburn.familymap.database;
 
-import clayburn.model.User;
+import clayburn.familymap.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

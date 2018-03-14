@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     compile project(':SharedClasses')
-    compile 'com.google.code.gson:gson:2.8.2'
-    compile 'org.xerial:sqlite-jdbc:3.21.0.1'
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.0-M2'
+    runtimeClasspath 'org.xerial:sqlite-jdbc:3.21.0.1'
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M4")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M4")
 }

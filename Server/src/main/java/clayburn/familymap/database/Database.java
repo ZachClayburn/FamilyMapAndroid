@@ -29,7 +29,7 @@ public class Database {
     public void openConnection() throws DatabaseException {
 
         try {
-            final String CONNECTION_URL = "jdbc:sqlite:Server/src/clayburn/familymap/familyMap.sqlite";
+            final String CONNECTION_URL = "jdbc:sqlite:Server/src/main/java/clayburn/familymap/familyMap.sqlite";
             connection = DriverManager.getConnection(CONNECTION_URL);
 
             connection.setAutoCommit(false);

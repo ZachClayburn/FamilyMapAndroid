@@ -1,6 +1,6 @@
 package clayburn.familymap.database;
 
-import clayburn.model.Event;
+import clayburn.familymap.model.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,8 +43,7 @@ class EventDAOTest {
 
         try {
             db.getEventDAO().addEvents(events);
-            assertThrows(Database.DatabaseException.class,()->db.getEventDAO().addEvents(duplicates),
-                    "[SQLITE_CONSTRAINT]  Abort due to constraint violation (column eventID is not unique)");
+            assertThrows(Database.DatabaseException.class,()->db.getEventDAO().addEvents(duplicates));
         } catch (Database.DatabaseException e) {
             fail(e);
         }

@@ -14,7 +14,7 @@ import java.nio.file.Paths;
  */
 public class DefaultHandler implements HttpHandler{
 
-    private static String sitePath ="ServerTestPage";
+    private static String sitePath ="Server/src/main/resources";
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
@@ -29,7 +29,9 @@ public class DefaultHandler implements HttpHandler{
 
                 Path filePath = Paths.get(sitePath, requestURL);
 
-                if (Files.exists(filePath) && Files.isReadable(filePath)) {
+                boolean a = Files.exists(filePath);
+                boolean b = Files.isReadable(filePath);
+                if (a && b) {
                     httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
                 } else {
                     httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0);

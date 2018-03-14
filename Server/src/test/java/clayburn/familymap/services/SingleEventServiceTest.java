@@ -1,11 +1,8 @@
 package clayburn.familymap.services;
 
-import clayburn.ServiceResponses.AllEventResponse;
-import clayburn.ServiceResponses.SingleEventResponse;
+import clayburn.familymap.ServiceResponses.SingleEventResponse;
 import clayburn.familymap.database.Database;
-import clayburn.model.AuthToken;
-import clayburn.model.Event;
-import clayburn.model.User;
+import clayburn.familymap.model.*;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;

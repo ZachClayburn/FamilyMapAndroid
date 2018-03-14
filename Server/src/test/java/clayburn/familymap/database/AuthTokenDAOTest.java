@@ -1,7 +1,7 @@
 package clayburn.familymap.database;
 
-import clayburn.model.AuthToken;
-import clayburn.model.User;
+import clayburn.familymap.model.AuthToken;
+import clayburn.familymap.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,8 +51,7 @@ class AuthTokenDAOTest {
         try {
             AuthTokenDAO dao = db.getAuthTokenDAO();;
             dao.addAuthToken(token1);
-            assertThrows(Database.DatabaseException.class,()->dao.addAuthToken(token2),
-                    "[SQLITE_CONSTRAINT]  Abort due to constraint violation (column authToken is not unique)");
+            assertThrows(Database.DatabaseException.class,()->dao.addAuthToken(token2));
         }
         catch (Database.DatabaseException e){
             fail(e);
