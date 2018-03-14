@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FamilyMap.iml" filepath="$PROJECT_DIR$/FamilyMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FamilyMapAndroid.iml" filepath="$PROJECT_DIR$/FamilyMapAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/Server/Server.iml" filepath="$PROJECT_DIR$/Server/Server.iml" />
       <module fileurl="file://$PROJECT_DIR$/SharedClasses/SharedClasses.iml" filepath="$PROJECT_DIR$/SharedClasses/SharedClasses.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />

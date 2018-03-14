@@ -8,5 +8,8 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile project(':SharedClasses')
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'org.xerial:sqlite-jdbc:3.21.0.1'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.0-M2'
 }
