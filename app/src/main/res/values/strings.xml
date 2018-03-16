@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">App</string>
+    <string name="app_name">Family Map</string>
+
+    <!-- LoginResisterFragment Strings-->
+    <string name="server_host_text">Server Host:</string>
+    <string name="server_port_text">Sever Port:</string>
+    <string name="user_name_text">User Name:</string>
+    <string name="password_text">Password:</string>
+    <string name="first_name_text">First Name:</string>
+    <string name="last_name_text">Last Name:</string>
+    <string name="email_text">Email</string>
+    <string name="gender_text">Gender:</string>
+    <string name="male_text">Male</string>
+    <string name="female_text">Female</string>
+    <string name="log_in_button_text">Log In</string>
+    <string name="register_button_text">Register</string>
+
+
 </resources>
