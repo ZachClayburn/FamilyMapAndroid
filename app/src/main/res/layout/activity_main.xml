@@ -6,4 +6,4 @@
         android:id="@+id/main_activity_fragment_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="clayburn.familymap.app.MainActivity" />
+        tools:context="clayburn.familymap.app.ui.MainActivity" />

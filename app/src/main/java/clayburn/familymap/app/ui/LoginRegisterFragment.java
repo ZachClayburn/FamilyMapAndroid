@@ -1,4 +1,4 @@
-package clayburn.familymap.app;
+package clayburn.familymap.app.ui;
 
 
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+
+import clayburn.familymap.app.R;
 
 
 /**

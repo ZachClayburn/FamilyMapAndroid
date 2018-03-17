@@ -6,7 +6,7 @@ import clayburn.familymap.model.*;
 /**
  * A request to load data into the server's database
  */
-public class LoadRequest {
+public class LoadRequest implements ServiceRequest{
 
     /**
      * An array of users to be added

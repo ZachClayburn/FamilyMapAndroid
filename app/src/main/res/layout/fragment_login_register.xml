@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="clayburn.familymap.app.LoginRegisterFragment">
+    tools:context="clayburn.familymap.app.ui.LoginRegisterFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +24,8 @@
             android:id="@+id/server_host_edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="number"
+            android:inputType="number|numberDecimal"
+            android:digits="0123456789."
             android:padding="5dp"/>
 
     </LinearLayout>
@@ -72,7 +73,7 @@
             android:id="@+id/user_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="number"
+            android:inputType="text"
             android:padding="5dp"/>
 
     </LinearLayout>
@@ -120,7 +121,7 @@
             android:id="@+id/first_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textPassword"
+            android:inputType="textPersonName"
             android:padding="5dp"/>
 
     </LinearLayout>
@@ -144,7 +145,7 @@
             android:id="@+id/last_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textPassword"
+            android:inputType="textPersonName"
             android:padding="5dp"/>
 
     </LinearLayout>

@@ -4,7 +4,7 @@ package clayburn.familymap.ServiceRequests;
 /**
  * A request to log onto the server
  */
-public class LoginRequest {
+public class LoginRequest implements ServiceRequest{
 
     /**
      * The user name to log in with

@@ -6,7 +6,7 @@ import clayburn.familymap.model.User;
 /**
  * A request to register a new user
  */
-public class RegisterRequest {
+public class RegisterRequest implements ServiceRequest {
 
     /**
      * The username to register

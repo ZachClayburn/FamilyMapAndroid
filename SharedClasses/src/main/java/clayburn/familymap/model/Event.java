@@ -24,12 +24,12 @@ public class Event {
     private String personID;
 
     /**
-     * Latitude of event’s location
+     * Latitude of event's location
      */
     private double latitude;
 
     /**
-     * Longitude of event’s location
+     * Longitude of event's location
      */
     private double longitude;
 
@@ -58,8 +58,8 @@ public class Event {
      * @param eventID Unique identifier for this event (non-empty string)
      * @param descendant Username of the User that this Event's corresponding Person belongs to
      * @param personID ID of this Event's corresponding Person
-     * @param latitude Latitude of event’s location
-     * @param longitude Longitude of event’s location
+     * @param latitude Latitude of event's location
+     * @param longitude Longitude of event's location
      * @param country Country in which event occurred
      * @param city City in which event occurred
      * @param eventType Type of event

@@ -163,8 +163,8 @@ public class Database {
 
     }
 
-    static private final String mainPath = "Server/src/clayburn/familymap/familyMap.sqlite";
-    static private final String backUpPath = "Server/src/clayburn/familymap/familyMapBackup.sqlite";
+    static private final String mainPath =      "Server/src/main/java/clayburn/familymap/familyMap.sqlite";
+    static private final String backUpPath =    "Server/src/main/java/clayburn/familymap/familyMapBackup.sqlite";
 
     public static void backUp() throws IOException {
         Files.copy(

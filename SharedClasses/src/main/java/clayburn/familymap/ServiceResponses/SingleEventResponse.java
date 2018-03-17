@@ -20,12 +20,12 @@ public class SingleEventResponse implements ServiceResponse {
     private String person;
 
     /**
-     * Latitude of event’s location
+     * Latitude of event's location
      */
     private double latitude;
 
     /**
-     * Longitude of event’s location
+     * Longitude of event's location
      */
     private double longitude;
 
