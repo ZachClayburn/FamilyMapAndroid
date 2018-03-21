@@ -12,9 +12,16 @@ import static org.junit.Assert.*;
  * Created by zach on 3/17/18.
  */
 public class ProxyTest {
+
+    private Proxy proxy = new Proxy("localhost",8080);
+    private Database db = new Database();
+
     @Before
     public void setUp() throws Exception {
         Database.backUp();
+        db.openConnection();
+        db.createAllTables();
+        db.closeConnection(true);
     }
 
     @After
@@ -24,6 +31,8 @@ public class ProxyTest {
 
     @Test
     public void login() throws Exception {
+        db.openConnection();
+//        db.getUserDAO().addUsers();
     }
 
     @Test
