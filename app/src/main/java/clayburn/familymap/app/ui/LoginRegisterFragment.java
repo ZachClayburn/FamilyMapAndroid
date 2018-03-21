@@ -50,7 +50,7 @@ public class LoginRegisterFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.layout,
+        View view = inflater.inflate(R.layout.fragment_login_register,
                 container,
                 false);
 
