@@ -24,8 +24,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
                 android:gravity="end"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,6 +100,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/menu_text_Layout">
@@ -107,6 +111,7 @@
                     android:layout_height="@dimen/menu_item_height"
                     android:digits="0123456789."
                     android:inputType="number|numberDecimal"
+                    android:imeOptions="actionNext"
                     android:padding="5dp" />
 
                 <EditText
@@ -114,6 +119,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/menu_item_height"
                     android:inputType="number"
+                    android:imeOptions="actionNext"
                     android:padding="5dp" />
 
                 <EditText
@@ -121,6 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/menu_item_height"
                     android:inputType="text"
+                    android:imeOptions="actionNext"
                     android:padding="5dp" />
 
                 <EditText
@@ -128,6 +135,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/menu_item_height"
                     android:inputType="textPassword"
+                    android:imeOptions="actionNext"
                     android:padding="5dp" />
 
                 <EditText
@@ -135,6 +143,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/menu_item_height"
                     android:inputType="textPersonName|textCapWords"
+                    android:imeOptions="actionNext"
                     android:padding="5dp" />
 
                 <EditText
@@ -142,6 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/menu_item_height"
                     android:inputType="textPersonName|textCapWords"
+                    android:imeOptions="actionNext"
                     android:padding="5dp" />
 
                 <EditText
@@ -149,6 +159,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/menu_item_height"
                     android:inputType="textEmailAddress"
+                    android:imeOptions="actionDone"
                     android:padding="5dp" />
 
                 <RadioGroup
@@ -163,13 +174,15 @@
                         android:id="@+id/male_radio_button"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/male_text" />
+                        android:text="@string/male_text"
+                        android:padding="5dp"/>
 
                     <RadioButton
                         android:id="@+id/female_radio_button"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/female_text" />
+                        android:text="@string/female_text"
+                        android:padding="5dp"/>
 
                 </RadioGroup>
 
@@ -178,7 +191,7 @@
     </ScrollView>
 
 
-    <android.support.v7.widget.ButtonBarLayout
+    <LinearLayout
         android:id="@+id/log_in_register_button_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -200,6 +213,6 @@
             android:layout_height="match_parent"
             android:text="@string/log_in_button_text" />
 
-    </android.support.v7.widget.ButtonBarLayout>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
