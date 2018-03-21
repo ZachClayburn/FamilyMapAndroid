@@ -6,19 +6,17 @@
     tools:context="clayburn.familymap.app.ui.LoginRegisterFragment">
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false">
+        android:id="@+id/log_in_register_scrollview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/log_in_register_button_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical" />
 
             <!--Text Views-->
             <LinearLayout
@@ -136,14 +134,14 @@
                     android:id="@+id/first_name_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/menu_item_height"
-                    android:inputType="textPersonName"
+                    android:inputType="textPersonName|textCapWords"
                     android:padding="5dp" />
 
                 <EditText
                     android:id="@+id/last_name_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/menu_item_height"
-                    android:inputType="textPersonName"
+                    android:inputType="textPersonName|textCapWords"
                     android:padding="5dp" />
 
                 <EditText
@@ -162,11 +160,13 @@
                     android:padding="5dp">
 
                     <RadioButton
+                        android:id="@+id/male_radio_button"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="@string/male_text" />
 
                     <RadioButton
+                        android:id="@+id/female_radio_button"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="@string/female_text" />
@@ -179,6 +179,7 @@
 
 
     <android.support.v7.widget.ButtonBarLayout
+        android:id="@+id/log_in_register_button_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
