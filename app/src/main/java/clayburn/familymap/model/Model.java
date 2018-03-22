@@ -36,6 +36,24 @@ public class Model {
     private Map<String, Person> mPersons;
     private Map<String, Event> mEvents;
     private Map<String, List<Event>> mPersonEvents;
+    private String mAuthToken;
+    private String mUserPersonID;
+
+    public String getUserPersonID() {
+        return mUserPersonID;
+    }
+
+    public void setUserPersonID(String userPersonID) {
+        mUserPersonID = userPersonID;
+    }
+
+    public String getAuthToken() {
+        return mAuthToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.mAuthToken = authToken;
+    }
 
     public static void setModel(Model model) {
         sModel = model;

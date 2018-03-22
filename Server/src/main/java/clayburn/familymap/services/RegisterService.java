@@ -47,7 +47,7 @@ public class RegisterService {
             Person[] persons = FillService.generatePersons(user,4);
             Event[] events = FillService.generateEvents(persons);
 
-            userDAO.addUsers(new User[] {user});
+            userDAO.addUsers(user);
 
             db.getPersonDAO().addPersons(persons);
             db.getEventDAO().addEvents(events);

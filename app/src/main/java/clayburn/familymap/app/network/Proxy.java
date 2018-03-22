@@ -105,28 +105,60 @@ public class Proxy {
     /**
      * Attempts to retrieve all of the current User's Persons from the database. If there is an
      * error on the sever side, it will report the message that the sever provided.
-     * @param address A string containing the address of the server to contact, as well as the port
-     *                number.
      * @param authToken The auth token acquired from either login or registration.
      * @return A response containing all of the Persons associated with the user, or an error
      * message if there was one.
      */
-    public ServiceResponse getPersons(String address, String authToken){
+    public ServiceResponse getPersons(String authToken){
         //TODO Add getPersons function
-        return null;
+        return dataFetchHelper(authToken,"/person", AllPersonResponse.class);
     }
 
     /**
      * Attempts to retrieve all of the current User's Events from the database. If there is an
      * error on the sever side, it will report the message that the sever provided.
-     * @param address A string containing the address of the server to contact, as well as the port
-     *                number.
      * @param authToken The auth token acquired from either login or registration.
      * @return A response containing all of the Events associated with the user, or an error
      * message if there was one.
      */
-    public ServiceResponse getEvents(String address, String authToken){
+    public ServiceResponse getEvents(String authToken){
         //TODO Add getEvents function
-        return null;
+        return dataFetchHelper(authToken,"/event", AllEventResponse.class);
+    }
+
+    private ServiceResponse dataFetchHelper(String authToken,
+                                            String file,
+                                            Class<?extends ServiceResponse> responseClass){
+
+        try {
+            URL url = new URL("http",hostName,port,file);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setDoInput(true);
+            connection.setRequestProperty("Authorization",authToken);
+
+            ServiceResponse response;
+
+            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                response = ObjectTransmitter.receive(
+                        connection.getInputStream(),
+                        responseClass
+                );
+            } else {
+                response = ObjectTransmitter.receive(
+                        connection.getErrorStream(),
+                        ErrorResponse.class
+                );
+            }
+
+            return response;
+
+        } catch (IOException | ObjectTransmitter.TransmissionException e) {
+            Log.e(TAG,"Client Error",e);
+            return new ErrorResponse("Client Error: " + e.getLocalizedMessage());
+        }
+
     }
 }

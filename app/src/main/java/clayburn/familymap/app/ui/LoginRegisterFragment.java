@@ -24,6 +24,7 @@ import clayburn.familymap.app.R;
 import clayburn.familymap.app.network.LogInTask;
 import clayburn.familymap.app.network.LoginRegisterParams;
 import clayburn.familymap.app.network.RegisterTask;
+import clayburn.familymap.model.Model;
 
 
 /**
@@ -315,6 +316,9 @@ public class LoginRegisterFragment extends Fragment
             LoginResponse loginResponse = (LoginResponse) response;
 
             //TODO After successful login, begin data fetch process
+            Model.getModel().setAuthToken(loginResponse.getAuthToken());
+            Model.getModel().setUserPersonID(loginResponse.getPersonID());
+
             Toast.makeText(getContext(),"SUCCESS!",Toast.LENGTH_LONG).show();
             mIsWorking = false;
             updateRegisterButtonState();
@@ -334,6 +338,9 @@ public class LoginRegisterFragment extends Fragment
             RegisterResponse registerResponse = (RegisterResponse) response;
 
             //TODO After successful login, begin data fetch process
+            Model.getModel().setAuthToken(registerResponse.getAuthToken());
+            Model.getModel().setUserPersonID(registerResponse.getPersonID());
+
             Toast.makeText(getContext(),"SUCCESS!",Toast.LENGTH_LONG).show();
             mIsWorking = false;
             updateRegisterButtonState();

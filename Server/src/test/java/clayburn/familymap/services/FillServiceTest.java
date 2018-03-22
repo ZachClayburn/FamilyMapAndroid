@@ -52,7 +52,7 @@ class FillServiceTest {
             Database db = new Database();
 
             db.openConnection();
-            db.getUserDAO().addUsers(new User[]{user});
+            db.getUserDAO().addUsers(user);
             db.closeConnection(true);
 
             FillResponse response = new FillService().fill(username,4);

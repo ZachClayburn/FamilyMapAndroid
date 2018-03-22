@@ -19,7 +19,7 @@ public class UserDAO extends Database.DataAccessObject {
      * @param users The Users to be added to the database
      * @throws Database.DatabaseException If there is an error getting the Users
      */
-    public void addUsers(User[] users) throws Database.DatabaseException {
+    public void addUsers(User... users) throws Database.DatabaseException {
 
         final String update = "INSERT INTO users (username, password, email, firstName, lastName, gender, personID)" +
                 "VALUES (?,?,?,?,?,?,?);";
