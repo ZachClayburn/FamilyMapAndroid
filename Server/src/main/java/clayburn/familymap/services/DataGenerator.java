@@ -13,10 +13,12 @@ import java.io.InputStream;
 public class DataGenerator {
 
     static {
-        final String resourceLocation = "/Server/src/main/resources/";
+        final String resourceLocation = "Server/src/main/resources/";
         try {
             String fileName;
             fileName = resourceLocation + "locations.json";
+            System.out.println("Working Directory = " +
+                    System.getProperty("user.dir"));
             InputStream stream = new FileInputStream(fileName);
             locations = ObjectTransmitter.receive(stream,LocationHolder.class);
             stream.close();

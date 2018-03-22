@@ -13,14 +13,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import clayburn.familymap.ServiceResponses.ErrorResponse;
+import clayburn.familymap.ServiceResponses.LoginResponse;
+import clayburn.familymap.ServiceResponses.ServiceResponse;
 import clayburn.familymap.app.R;
+import clayburn.familymap.app.network.LogInTask;
+import clayburn.familymap.app.network.LoginRegisterParams;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginRegisterFragment extends Fragment {
+public class LoginRegisterFragment extends Fragment implements LogInTask.LoginCaller{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -43,7 +49,7 @@ public class LoginRegisterFragment extends Fragment {
     private String mLastName;
     private String mEmail;
     private String mGender;
-    private boolean mHasBeganCommunications;
+    private boolean mIsWorking;
 
     public LoginRegisterFragment() {
         // Required empty public constructor
@@ -67,7 +73,7 @@ public class LoginRegisterFragment extends Fragment {
                 container,
                 false);
 
-        mHasBeganCommunications = false;
+        mIsWorking = false;
 
         mServerHostEditText = view.findViewById(R.id.server_host_edit_text);
         mServerHostEditText.addTextChangedListener(new TextWatcher() {
@@ -226,15 +232,32 @@ public class LoginRegisterFragment extends Fragment {
         mRegisterButton = view.findViewById(R.id.register_button);
         mRegisterButton.setEnabled(false);
 
+
         mLogInButton = view.findViewById(R.id.log_in_button);
         mLogInButton.setEnabled(false);
+        mLogInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIsWorking = true;
+                updateLoginButtonState();
+                updateRegisterButtonState();
+                LoginRegisterParams params = new LoginRegisterParams(
+                        mServerHost,
+                        mServerPort,
+                        mUserName,
+                        mPassword
+                );
+                new LogInTask(LoginRegisterFragment.this).execute(params);
+                //TODO Add a working indicator
+            }
+        });
 
 
         return view;
     }
 
     private void updateLoginButtonState(){
-        if (    mHasBeganCommunications ||
+        if (    mIsWorking ||
                 TextUtils.isEmpty(mServerHost) ||
                 mServerPort == 0 ||
                 TextUtils.isEmpty(mUserName) ||
@@ -247,7 +270,7 @@ public class LoginRegisterFragment extends Fragment {
     }
 
     private void updateRegisterButtonState(){
-        if (    mHasBeganCommunications ||
+        if (    mIsWorking ||
                 TextUtils.isEmpty(mServerHost) ||
                 mServerPort == 0 ||
                 TextUtils.isEmpty(mUserName) ||
@@ -263,5 +286,19 @@ public class LoginRegisterFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onLogInComplete(ServiceResponse response) {
+        try{
+            LoginResponse loginResponse = (LoginResponse) response;
 
+            //TODO After successful login, begin data fetch process
+            Toast.makeText(getContext(),"SUCCESS!",Toast.LENGTH_LONG).show();
+        } catch (ClassCastException e){
+            ErrorResponse errorResponse = (ErrorResponse) response;
+            Toast.makeText(getContext(),errorResponse.getMessage(),Toast.LENGTH_LONG).show();
+            mIsWorking = false;
+            updateLoginButtonState();
+            updateRegisterButtonState();
+        }
+    }
 }

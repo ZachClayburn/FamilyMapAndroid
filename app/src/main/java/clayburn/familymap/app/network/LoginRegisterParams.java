@@ -18,6 +18,13 @@ public class LoginRegisterParams {
     private String mEmail;
     private String mGender;
 
+    /**
+     * Creates a LoginRegisterParams with only the information for login
+     * @param serverHost The server's host name
+     * @param serverPort The server's port
+     * @param userName The user's username
+     * @param password The user's password
+     */
     public LoginRegisterParams(String serverHost, int serverPort,
                                String userName, String password) {
         mServerHost = serverHost;
@@ -26,6 +33,17 @@ public class LoginRegisterParams {
         mPassword = password;
     }
 
+    /**
+     * Creates a LoginRegisterParams with all the information needed for registration
+     * @param serverHost The server's host name
+     * @param serverPort The server's port
+     * @param userName The user's username
+     * @param password The user's password
+     * @param firstName The user's first name
+     * @param lastName The user's last name
+     * @param email The user's email address
+     * @param gender The user's gender
+     */
     public LoginRegisterParams(String serverHost, int serverPort, String userName,
                                String password, String firstName, String lastName,
                                String email, String gender) {

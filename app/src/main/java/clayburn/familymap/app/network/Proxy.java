@@ -1,5 +1,7 @@
 package clayburn.familymap.app.network;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -22,6 +24,8 @@ import clayburn.familymap.ServiceResponses.ServiceResponse;
 
 public class Proxy {
 
+    private String TAG = "PROXY";
+
     private String hostName;
     private int port;
 
@@ -29,8 +33,8 @@ public class Proxy {
      * Creates a Proxy object to connect to and communicate with a server at the given
      * <code>hostName</code> on the given <code>port</code>. A connection is not opened until one
      * of the service methods is called.
-     * @param hostName
-     * @param port
+     * @param hostName The host name of the server
+     * @param port The TCP port of the server
      */
     public Proxy(String hostName, int port) {
         this.hostName = hostName;
@@ -46,7 +50,7 @@ public class Proxy {
      * server, or an error message if there was one.
      */
     public ServiceResponse login(LoginRequest request){
-        return loginRegisterHelper(request, "/login", LoginResponse.class);
+        return loginRegisterHelper(request, "/user/login", LoginResponse.class);
     }
 
     /**
@@ -58,14 +62,14 @@ public class Proxy {
      * server, or an error message if there was one.
      */
     public ServiceResponse register(RegisterRequest request){
-        return loginRegisterHelper(request, "/register", RegisterResponse.class);
+        return loginRegisterHelper(request, "/user/register", RegisterResponse.class);
     }
 
     private ServiceResponse loginRegisterHelper(ServiceRequest request,
                                                 String file,
                                                 Class<?extends ServiceResponse> responseClass){
         try {
-            URL url = new URL("http://",hostName,port,file);
+            URL url = new URL("http",hostName,port,file);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -93,7 +97,7 @@ public class Proxy {
             return response;
 
         } catch (IOException | ObjectTransmitter.TransmissionException e) {
-            e.printStackTrace();
+            Log.e(TAG,"Client Error",e);
             return new ErrorResponse("Client Error: " + e.getLocalizedMessage());
         }
     }
