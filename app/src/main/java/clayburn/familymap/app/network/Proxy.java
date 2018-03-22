@@ -89,7 +89,7 @@ public class Proxy {
                 );
             } else {
                 response = ObjectTransmitter.receive(
-                        connection.getInputStream(),
+                        connection.getErrorStream(),
                         ErrorResponse.class
                 );
             }

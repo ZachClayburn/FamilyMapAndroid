@@ -23,7 +23,7 @@ public class LogInTask extends AsyncTask<LoginRegisterParams,Void,ServiceRespons
          * @param response Either a LoginResponse from the server containing an authorization token,
          *                or an ErrorResponse containing an error message.
          */
-        public void onLogInComplete(ServiceResponse response);
+        void onLogInComplete(ServiceResponse response);
     }
 
     private LoginCaller mCaller;
