@@ -5,10 +5,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import clayburn.familymap.ServiceRequests.LoginRequest;
+import clayburn.familymap.ServiceResponses.AllPersonResponse;
 import clayburn.familymap.ServiceResponses.ErrorResponse;
 import clayburn.familymap.ServiceResponses.LoginResponse;
 import clayburn.familymap.ServiceResponses.ServiceResponse;
 import clayburn.familymap.database.Database;
+import clayburn.familymap.model.AuthToken;
+import clayburn.familymap.model.Event;
+import clayburn.familymap.model.Person;
 import clayburn.familymap.model.User;
 
 import static org.junit.Assert.*;
@@ -76,6 +80,36 @@ public class ProxyTest {
     public void getPersons() throws Exception {
         Proxy proxy = new Proxy(serverHost,port);
 
+        final String personID1 = "0";
+        final String personID2 = "1";
+        final String personID3 = "2";
+        final String personID4 = "3";
+
+        final String authToken = "4513543651";
+
+        AuthToken token = new AuthToken(authToken,mUserName);
+
+        Person person1 = new Person(mUserName,personID1,"John","Doe","M",
+                personID3,personID4,personID2);
+        Person person2 = new Person(mUserName,personID2,"Jane","Doe","F",
+                "","",personID1);
+        Person person3 = new Person(mUserName,personID3,"James","Doe","M",
+                null,null,null);
+
+        Person[] persons = {
+                person1,
+                person2,
+                person3
+        };
+
+        db.openConnection();
+        db.getPersonDAO().addPersons(persons);
+        db.getAuthTokenDAO().addAuthToken(token);
+        db.closeConnection(true);
+
+        AllPersonResponse response = (AllPersonResponse) proxy.getPersons(authToken);
+
+        assertArrayEquals(persons,response.getData());
     }
 
     @Test

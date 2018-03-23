@@ -21,7 +21,7 @@ public class PersonDAO extends Database.DataAccessObject {
      * @param persons the Person to be added to the Database
      * @throws clayburn.familymap.database.Database.DatabaseException If there is an Error in loading the Persons
      */
-    public void addPersons(Person[] persons) throws Database.DatabaseException {
+    public void addPersons(Person... persons) throws Database.DatabaseException {
 
         final String update = "INSERT INTO " +
                 "persons (personID, descendant, firstName, lastName, gender, father, mother, spouse) " +
