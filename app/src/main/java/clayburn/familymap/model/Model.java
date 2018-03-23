@@ -39,6 +39,16 @@ public class Model {
     private String mAuthToken;
     private String mUserPersonID;
 
+    /**
+     * Processes the information from the server and populates the Model with the information in the
+     * form needed for the app.
+     * @param persons All of the Persons belonging to the user
+     * @param events All of the Events linked to Persons belonging to the user
+     */
+    public void populateModel(Person[] persons, Event[] events){
+        //TODO Finish this method
+    }
+
     public String getUserPersonID() {
         return mUserPersonID;
     }
@@ -55,31 +65,15 @@ public class Model {
         this.mAuthToken = authToken;
     }
 
-    public static void setModel(Model model) {
-        sModel = model;
-    }
-
     public Map<String, Person> getPersons() {
         return mPersons;
-    }
-
-    public void setPersons(Map<String, Person> persons) {
-        mPersons = persons;
     }
 
     public Map<String, Event> getEvents() {
         return mEvents;
     }
 
-    public void setEvents(Map<String, Event> events) {
-        mEvents = events;
-    }
-
     public Map<String, List<Event>> getPersonEvents() {
         return mPersonEvents;
-    }
-
-    public void setPersonEvents(Map<String, List<Event>> personEvents) {
-        mPersonEvents = personEvents;
     }
 }
