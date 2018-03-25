@@ -23,7 +23,7 @@ public class DataFetchTask extends AsyncTask<String,Void,String>{
          * This method will be called by the DataFetchTask on the object that created it when the
          * transaction with the server is completed Successfully.
          */
-        void onDataFetchSuccsess();
+        void onDataFetchSuccess();
 
         /**
          * This method will be called by the DataFetchTask on the object that created it if the
@@ -82,7 +82,7 @@ public class DataFetchTask extends AsyncTask<String,Void,String>{
     @Override
     protected void onPostExecute(String result) {
         if (result.equals(SUCCESS_MESSAGE)){
-            mCaller.onDataFetchSuccsess();
+            mCaller.onDataFetchSuccess();
         } else {
             mCaller.onDataFetchFailure(result);
         }

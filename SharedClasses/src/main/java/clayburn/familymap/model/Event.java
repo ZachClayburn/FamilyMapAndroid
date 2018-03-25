@@ -1,10 +1,12 @@
 package clayburn.familymap.model;
 
 
+import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
- * Event Represents an event in a {@link clayburn.model.Person}'s life
+ * Event Represents an event in a {@link clayburn.familymap.model.Person}'s life
  */
 public class Event {
 
@@ -212,5 +214,26 @@ public class Event {
     @Override
     public int hashCode() {
         return Objects.hash(eventID, descendant, personID, latitude, longitude, country, city, eventType, year);
+    }
+
+    static class EventComparator implements Comparator<Event>, Serializable{
+
+        @Override
+        public int compare(Event event1, Event event2) {
+
+            if (event1.equals(event2)) {
+                return 0;
+            }
+
+            if (Integer.parseInt(event1.getYear()) < Integer.parseInt(event2.getYear())){
+                return -1;
+            }
+
+            if (Integer.parseInt(event1.getYear()) > Integer.parseInt(event2.getYear())){
+                return 1;
+            }
+
+            return event1.getEventID().compareTo(event2.getEventID());
+        }
     }
 }

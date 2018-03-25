@@ -7,6 +7,8 @@ package clayburn.familymap.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The global data holder for the entire app.
@@ -35,7 +37,7 @@ public class Model {
 
     private Map<String, Person> mPersons;
     private Map<String, Event> mEvents;
-    private Map<String, List<Event>> mPersonEvents;
+    private Map<String, Set<Event>> mPersonEvents;
     private String mAuthToken;
     private String mUserPersonID;
 
@@ -47,6 +49,28 @@ public class Model {
      */
     public void populateModel(Person[] persons, Event[] events){
         //TODO Finish this method
+
+        for (Person person : persons) {
+            mPersons.put(person.getPersonID(),person);
+        }
+
+        for (Event event : events) {
+            mEvents.put(event.getEventID(),event);
+
+            Set<Event> set = mPersonEvents.get(event.getPersonID());
+
+            if (set == null) {
+                set = new TreeSet<>(new Event.EventComparator());
+            }
+            set.add(event);
+        }
+    }
+
+    public String getUsersRealName(){
+        String firstName = mPersons.get(mUserPersonID).getFirstName();
+        String lastName = mPersons.get(mUserPersonID).getLastName();
+
+        return firstName + " " + lastName;
     }
 
     public String getUserPersonID() {
@@ -73,7 +97,7 @@ public class Model {
         return mEvents;
     }
 
-    public Map<String, List<Event>> getPersonEvents() {
+    public Map<String, Set<Event>> getPersonEvents() {
         return mPersonEvents;
     }
 }

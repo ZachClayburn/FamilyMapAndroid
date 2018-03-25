@@ -21,6 +21,7 @@ import clayburn.familymap.ServiceResponses.LoginResponse;
 import clayburn.familymap.ServiceResponses.RegisterResponse;
 import clayburn.familymap.ServiceResponses.ServiceResponse;
 import clayburn.familymap.app.R;
+import clayburn.familymap.app.network.DataFetchTask;
 import clayburn.familymap.app.network.LogInTask;
 import clayburn.familymap.app.network.LoginRegisterParams;
 import clayburn.familymap.app.network.RegisterTask;
@@ -30,10 +31,12 @@ import clayburn.familymap.model.Model;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginRegisterFragment extends Fragment
-        implements LogInTask.LoginCaller, RegisterTask.RegisterCaller{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+public class LoginRegisterFragment
+        extends Fragment
+        implements
+        LogInTask.LoginCaller,
+        RegisterTask.RegisterCaller
+        ,DataFetchTask.DataFetchCaller{
 
     private EditText mServerHostEditText;
     private EditText mServerPortEditText;
@@ -319,10 +322,14 @@ public class LoginRegisterFragment extends Fragment
             Model.getModel().setAuthToken(loginResponse.getAuthToken());
             Model.getModel().setUserPersonID(loginResponse.getPersonID());
 
+            new DataFetchTask(this,mServerHost,mServerPort)
+                    .execute(loginResponse.getAuthToken());
+/*
             Toast.makeText(getContext(),"SUCCESS!",Toast.LENGTH_LONG).show();
             mIsWorking = false;
             updateRegisterButtonState();
             updateLoginButtonState();
+*/
         } catch (ClassCastException e){
             ErrorResponse errorResponse = (ErrorResponse) response;
             Toast.makeText(getContext(),errorResponse.getMessage(),Toast.LENGTH_LONG).show();
@@ -341,10 +348,14 @@ public class LoginRegisterFragment extends Fragment
             Model.getModel().setAuthToken(registerResponse.getAuthToken());
             Model.getModel().setUserPersonID(registerResponse.getPersonID());
 
+            new DataFetchTask(this,mServerHost,mServerPort)
+                    .execute(registerResponse.getAuthToken());
+/*
             Toast.makeText(getContext(),"SUCCESS!",Toast.LENGTH_LONG).show();
             mIsWorking = false;
             updateRegisterButtonState();
             updateLoginButtonState();
+*/
         } catch (ClassCastException e){
             ErrorResponse errorResponse = (ErrorResponse) response;
             Toast.makeText(getContext(),errorResponse.getMessage(),Toast.LENGTH_LONG).show();
@@ -353,5 +364,19 @@ public class LoginRegisterFragment extends Fragment
             updateRegisterButtonState();
         }
 
+    }
+
+    @Override
+    public void onDataFetchSuccess() {
+        Toast.makeText(
+                getContext(),
+                Model.getModel().getUsersRealName(),
+                Toast.LENGTH_LONG
+        ).show();
+    }
+
+    @Override
+    public void onDataFetchFailure(String message) {
+        Toast.makeText(getContext(),message,Toast.LENGTH_LONG).show();
     }
 }
