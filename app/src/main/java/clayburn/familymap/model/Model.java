@@ -61,6 +61,7 @@ public class Model {
 
             if (set == null) {
                 set = new TreeSet<>(new Event.EventComparator());
+                mPersonEvents.put(event.getPersonID(),set);
             }
             set.add(event);
         }
