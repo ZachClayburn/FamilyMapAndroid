@@ -1,6 +1,7 @@
 package clayburn.familymap.app.ui;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -59,15 +60,52 @@ public class LoginRegisterFragment
     private String mGender;
     private boolean mIsWorking;
 
+    private enum mEditTextNames{
+        serverHost,
+        serverPort,
+        userName,
+        password,
+        firstName,
+        lastName,
+        email
+    }
+
+    private LoginRegisterContext mLoginRegisterContext;
+
     public LoginRegisterFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Activities that contain this fragment must implement this interface
+     */
+    public interface LoginRegisterContext{
+
+        /**
+         * Called on the containing activity
+         */
+        void onLoginCompleted();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof LoginRegisterContext) {
+            mLoginRegisterContext = (LoginRegisterContext) context;
+        } else {
+            throw new RuntimeException(context.getClass() + " must implement LoginRegisterContext");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mLoginRegisterContext = null;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
@@ -84,145 +122,25 @@ public class LoginRegisterFragment
         mIsWorking = false;
 
         mServerHostEditText = view.findViewById(R.id.server_host_edit_text);
-        mServerHostEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mServerHost = s.toString();
-                updateLoginButtonState();
-                updateRegisterButtonState();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mServerHostEditText.addTextChangedListener(new TextFieldListener(mEditTextNames.serverHost));
 
         mServerPortEditText = view.findViewById(R.id.server_port_edit_text);
-        mServerPortEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                try {
-                    mServerPort = Integer.parseInt(s.toString());
-                } catch (NumberFormatException e){
-                    mServerPort = 0;
-                }
-                updateLoginButtonState();
-                updateRegisterButtonState();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mServerPortEditText.addTextChangedListener(new TextFieldListener(mEditTextNames.serverPort));
 
         mUserNameEditText = view.findViewById(R.id.user_name_edit_text);
-        mUserNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mUserName = s.toString();
-                updateLoginButtonState();
-                updateRegisterButtonState();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mUserNameEditText.addTextChangedListener(new TextFieldListener(mEditTextNames.userName));
 
         mPasswordEditText = view.findViewById(R.id.password_edit_text);
-        mPasswordEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mPassword = s.toString();
-                updateLoginButtonState();
-                updateRegisterButtonState();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mPasswordEditText.addTextChangedListener(new TextFieldListener(mEditTextNames.password));
 
         mFirstNameEditText = view.findViewById(R.id.first_name_edit_text);
-        mFirstNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mFirstName = s.toString();
-                updateRegisterButtonState();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mFirstNameEditText.addTextChangedListener(new TextFieldListener(mEditTextNames.firstName));
 
         mLastNameEditText = view.findViewById(R.id.last_name_edit_text);
-        mLastNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mLastName = s.toString();
-                updateRegisterButtonState();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mLastNameEditText.addTextChangedListener(new TextFieldListener(mEditTextNames.lastName));
 
         mEmailEditText = view.findViewById(R.id.email_edit_text);
-        mEmailEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mEmail = s.toString();
-                updateRegisterButtonState();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mEmailEditText.addTextChangedListener(new TextFieldListener(mEditTextNames.email));
 
         mGenderRadioGroup = view.findViewById(R.id.gender_radio_group);
         mGenderRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -283,6 +201,56 @@ public class LoginRegisterFragment
         return view;
     }
 
+    private class TextFieldListener implements TextWatcher{
+
+        TextFieldListener(mEditTextNames fieldName){
+            mFieldName = fieldName;
+        }
+
+        mEditTextNames mFieldName;
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            switch (mFieldName){
+
+                case serverHost:{
+                    mServerHost = s.toString();
+                } break;
+                case serverPort:{
+                    try {
+                        mServerPort = Integer.parseInt(s.toString());
+                    } catch (NumberFormatException e){
+                        mServerPort = 0;
+                    }
+                } break;
+                case userName:{
+                    mUserName = s.toString();
+                } break;
+                case password:{
+                    mPassword = s.toString();
+                } break;
+                case firstName:{
+                    mFirstName = s.toString();
+                } break;
+                case lastName:{
+                    mLastName = s.toString();
+                } break;
+                case email:{
+                    mEmail = s.toString();
+                } break;
+            }
+            updateLoginButtonState();
+            updateRegisterButtonState();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {}
+    }
+
     private void updateLoginButtonState(){
         if (    mIsWorking ||
                 TextUtils.isEmpty(mServerHost) ||
@@ -318,18 +286,11 @@ public class LoginRegisterFragment
         try{
             LoginResponse loginResponse = (LoginResponse) response;
 
-            //TODO After successful login, begin data fetch process
             Model.getModel().setAuthToken(loginResponse.getAuthToken());
             Model.getModel().setUserPersonID(loginResponse.getPersonID());
 
             new DataFetchTask(this,mServerHost,mServerPort)
                     .execute(loginResponse.getAuthToken());
-/*
-            Toast.makeText(getContext(),"SUCCESS!",Toast.LENGTH_LONG).show();
-            mIsWorking = false;
-            updateRegisterButtonState();
-            updateLoginButtonState();
-*/
         } catch (ClassCastException e){
             ErrorResponse errorResponse = (ErrorResponse) response;
             Toast.makeText(getContext(),errorResponse.getMessage(),Toast.LENGTH_LONG).show();
@@ -344,18 +305,11 @@ public class LoginRegisterFragment
         try{
             RegisterResponse registerResponse = (RegisterResponse) response;
 
-            //TODO After successful login, begin data fetch process
             Model.getModel().setAuthToken(registerResponse.getAuthToken());
             Model.getModel().setUserPersonID(registerResponse.getPersonID());
 
             new DataFetchTask(this,mServerHost,mServerPort)
                     .execute(registerResponse.getAuthToken());
-/*
-            Toast.makeText(getContext(),"SUCCESS!",Toast.LENGTH_LONG).show();
-            mIsWorking = false;
-            updateRegisterButtonState();
-            updateLoginButtonState();
-*/
         } catch (ClassCastException e){
             ErrorResponse errorResponse = (ErrorResponse) response;
             Toast.makeText(getContext(),errorResponse.getMessage(),Toast.LENGTH_LONG).show();
@@ -373,6 +327,7 @@ public class LoginRegisterFragment
                 Model.getModel().getUsersRealName(),
                 Toast.LENGTH_LONG
         ).show();
+        mLoginRegisterContext.onLoginCompleted();
     }
 
     @Override
