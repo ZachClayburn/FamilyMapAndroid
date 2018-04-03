@@ -125,6 +125,37 @@ public class Model {
         );
     }
 
+    /**
+     * Return the name of the Person who owns the given event
+     * @param eventID The eventID of the Event you are checking
+     * @return The first and last name of the person who the event belongs to formatted as a string
+     */
+    public String getEventPersonName(String eventID){
+        Event event = mEvents.get(eventID);
+        Person person = mPersons.get(event.getPersonID());
+        return person.getFirstName() + " " + person.getLastName();
+    }
+
+    /**
+     * Get the information of an event formatted as a string
+     * @param eventID The eventID of the Event you want information on
+     * @return A string containing the event type, event location and event year
+     */
+    public String getEventInfo(String eventID){
+        Event event = mEvents.get(eventID);
+        return new StringBuilder()
+                .append(event.getEventType())
+                .append(": ")
+                .append(event.getCity())
+                .append(", ")
+                .append(event.getCountry())
+                .append(" (")
+                .append(event.getYear())
+                .append(")")
+                .toString();
+
+    }
+
     public String getUserPersonID() {
         return mUserPersonID;
     }

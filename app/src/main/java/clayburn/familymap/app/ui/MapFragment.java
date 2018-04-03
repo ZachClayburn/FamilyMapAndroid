@@ -7,10 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -36,6 +40,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String SELECTED_EVENT = "SELECTED_EVENT";
+    public static final String TAG = "MAP_FRAGMENT";
 
     // TODO: Rename and change types of parameters
     private String mSelectedEventID;
@@ -43,6 +48,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private OnFragmentInteractionListener mListener;
     private GoogleMap mMap;
     private ConstraintLayout mInfoLayout;
+    private TextView mEventDetailPersonName;
+    private TextView mEventDetailInformation;
+
     private boolean mInfoLayoutHidden;
 
     public MapFragment() {
@@ -100,6 +108,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 //        MapView mapView = v.findViewById(R.id.family_map);
 //        mapView.getMapAsync(this);
         mapFragment.getMapAsync(this);
+
+        mEventDetailPersonName = v.findViewById(R.id.event_detail_person_name);
+        mEventDetailInformation = v.findViewById(R.id.event_detail_information);
+
         mInfoLayout = v.findViewById(R.id.info_layout);
         mInfoLayoutHidden = true;
 
@@ -132,18 +144,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if (mInfoLayoutHidden){
-                    raiseInfoLayout();
-                } else {
+                if (!mInfoLayoutHidden){//TODO Set to lower if already raised
                     lowerInfoLayout();
                 }
             }
-        });//TODO Figure out map onClickListener
+        });
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                return false;
+
+                return selectMarker(marker);
             }
         });
     }
@@ -162,6 +173,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     .icon(icon)
             ).setTag(eventID);
         }
+    }
+
+    private boolean selectMarker(Marker marker){
+        if(mInfoLayoutHidden){
+            raiseInfoLayout();
+        }
+        String eventID = (String) marker.getTag();
+        LatLng position = marker.getPosition();
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(position));
+        mEventDetailPersonName.setText(Model.get().getEventPersonName(eventID));
+        mEventDetailInformation.setText(Model.get().getEventInfo(eventID));
+        return true;
     }
 
     private void lowerInfoLayout(){
