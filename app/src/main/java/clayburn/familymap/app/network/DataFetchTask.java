@@ -71,7 +71,7 @@ public class DataFetchTask extends AsyncTask<String,Void,String>{
 
         AllEventResponse eventResponse = (AllEventResponse) response;
 
-        Model.getModel().populateModel(
+        Model.get().populateModel(
                 personResponse.getData(),
                 eventResponse.getData()
         );

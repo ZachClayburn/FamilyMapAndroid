@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import clayburn.familymap.ServiceRequests.RegisterRequest;
 import clayburn.familymap.ServiceResponses.ErrorResponse;
 import clayburn.familymap.ServiceResponses.LoginResponse;
 import clayburn.familymap.ServiceResponses.RegisterResponse;
@@ -146,11 +145,7 @@ public class LoginRegisterFragment
         mGenderRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (group.getCheckedRadioButtonId() == R.id.male_radio_button){
-                    mGender = "m";
-                } else {
-                    mGender = "f";
-                }
+                mGender = (checkedId == R.id.male_radio_button) ? "m" : "f";
                 updateRegisterButtonState();
             }
         });
@@ -286,8 +281,8 @@ public class LoginRegisterFragment
         try{
             LoginResponse loginResponse = (LoginResponse) response;
 
-            Model.getModel().setAuthToken(loginResponse.getAuthToken());
-            Model.getModel().setUserPersonID(loginResponse.getPersonID());
+            Model.get().setAuthToken(loginResponse.getAuthToken());
+            Model.get().setUserPersonID(loginResponse.getPersonID());
 
             new DataFetchTask(this,mServerHost,mServerPort)
                     .execute(loginResponse.getAuthToken());
@@ -305,8 +300,8 @@ public class LoginRegisterFragment
         try{
             RegisterResponse registerResponse = (RegisterResponse) response;
 
-            Model.getModel().setAuthToken(registerResponse.getAuthToken());
-            Model.getModel().setUserPersonID(registerResponse.getPersonID());
+            Model.get().setAuthToken(registerResponse.getAuthToken());
+            Model.get().setUserPersonID(registerResponse.getPersonID());
 
             new DataFetchTask(this,mServerHost,mServerPort)
                     .execute(registerResponse.getAuthToken());
@@ -324,7 +319,7 @@ public class LoginRegisterFragment
     public void onDataFetchSuccess() {
         Toast.makeText(
                 getContext(),
-                Model.getModel().getUsersRealName(),
+                Model.get().getUsersRealName(),
                 Toast.LENGTH_LONG
         ).show();
         mLoginRegisterContext.onLoginCompleted();

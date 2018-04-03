@@ -11,11 +11,62 @@
     <fragment
         android:id="@+id/family_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
+        class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="@android:color/background_light"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/family_map">
+
+        <ImageView
+            android:id="@+id/event_detail_person_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_android_placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/event_detail_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/person_icon_support_information" />
+
+        <TextView
+            android:id="@+id/event_detail_person_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/event_detail_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Name of person" />
+
+        <TextView
+            android:id="@+id/event_detail_information"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/event_detail_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/event_detail_person_name"
+            tools:text="Event Details" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/event_detail_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.24" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

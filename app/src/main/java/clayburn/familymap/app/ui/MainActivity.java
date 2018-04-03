@@ -28,10 +28,10 @@ public class MainActivity extends AppCompatActivity implements
         mFragment = mFragmentManager.findFragmentById(R.id.main_activity_fragment_holder);
 
         if (mFragment == null) {
-            if (Model.getModel().getUserPersonID() == null) {
+            if (Model.get().getUserPersonID() == null) {
                 mFragment = new LoginRegisterFragment();
             } else {
-                mFragment = MapFragment.newInstance("","");
+                mFragment = MapFragment.newInstance(null);
             }
             mFragmentManager.beginTransaction()
                     .add(R.id.main_activity_fragment_holder, mFragment)
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoginCompleted() {
-        Fragment mapFragment = MapFragment.newInstance("","");
+        Fragment mapFragment = MapFragment.newInstance(null);
         try {
             mFragmentManager
                     .beginTransaction()
