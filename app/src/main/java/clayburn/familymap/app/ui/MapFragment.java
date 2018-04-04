@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -23,6 +22,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 import clayburn.familymap.app.R;
 import clayburn.familymap.model.Event;
@@ -42,16 +45,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final String SELECTED_EVENT = "SELECTED_EVENT";
     public static final String TAG = "MAP_FRAGMENT";
 
-    // TODO: Rename and change types of parameters
     private String mSelectedEventID;
+    private boolean mInfoLayoutHidden;
+    private ArrayList<Polyline> mPolyLines;
 
     private OnFragmentInteractionListener mListener;
     private GoogleMap mMap;
     private ConstraintLayout mInfoLayout;
     private TextView mEventDetailPersonName;
     private TextView mEventDetailInformation;
-
-    private boolean mInfoLayoutHidden;
 
     public MapFragment() {
         // Required empty public constructor
@@ -105,8 +107,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.family_map);
-//        MapView mapView = v.findViewById(R.id.family_map);
-//        mapView.getMapAsync(this);
         mapFragment.getMapAsync(this);
 
         mEventDetailPersonName = v.findViewById(R.id.event_detail_person_name);
@@ -114,6 +114,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         mInfoLayout = v.findViewById(R.id.info_layout);
         mInfoLayoutHidden = true;
+
+        mPolyLines = new ArrayList<>();
 
         return v;
     }
@@ -139,12 +141,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        drawMapContents();
+        drawEventsOnMap();
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if (!mInfoLayoutHidden){//TODO Set to lower if already raised
+                if (!mInfoLayoutHidden){
                     lowerInfoLayout();
                 }
             }
@@ -153,14 +155,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-
-                return selectMarker(marker);
+                return selectEventMarker(marker);
             }
         });
     }
 
-    private void drawMapContents(){
-        //TODO Add filter functionality
+    private void drawEventsOnMap(){
+        //TODO Add filter functionality in the Model
 
         for(String eventID : Model.get().getEventIDSet()){
 
@@ -175,16 +176,41 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private boolean selectMarker(Marker marker){
+    private boolean selectEventMarker(Marker marker){
         if(mInfoLayoutHidden){
             raiseInfoLayout();
         }
-        String eventID = (String) marker.getTag();
+        mSelectedEventID = (String) marker.getTag();
+
         LatLng position = marker.getPosition();
         mMap.animateCamera(CameraUpdateFactory.newLatLng(position));
-        mEventDetailPersonName.setText(Model.get().getEventPersonName(eventID));
-        mEventDetailInformation.setText(Model.get().getEventInfo(eventID));
+
+        mEventDetailPersonName.setText(Model.get().getEventPersonName(mSelectedEventID));
+        mEventDetailInformation.setText(Model.get().getEventInfo(mSelectedEventID));
+
+        drawRelationLines();
+
         return true;
+    }
+
+    private void drawRelationLines(){
+        Log.d(TAG,"drawRelationLines() Called");
+        PolylineOptions spouseLine = Model.get().getSpouseLine(mSelectedEventID);
+        if (spouseLine != null) {
+            mPolyLines.add(mMap.addPolyline(spouseLine));
+        }
+
+        PolylineOptions lifeStoryLine = Model.get().getLifeStoryLine(mSelectedEventID);
+        if (lifeStoryLine != null) {
+            mPolyLines.add(mMap.addPolyline(lifeStoryLine));
+        }
+
+        PolylineOptions[] familyTreeLines = Model.get().getFamilyHistoryLines(mSelectedEventID);
+        if (familyTreeLines != null) {
+            for (PolylineOptions line : familyTreeLines){
+                mPolyLines.add(mMap.addPolyline(line));
+            }
+        }
     }
 
     private void lowerInfoLayout(){
@@ -194,6 +220,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .setDuration(300)
                 .start();
         mInfoLayoutHidden = !mInfoLayoutHidden;
+
+        for (Polyline polyline : mPolyLines){
+            polyline.remove();
+        }
     }
 
     private void raiseInfoLayout(){

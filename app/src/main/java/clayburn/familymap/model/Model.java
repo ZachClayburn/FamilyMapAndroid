@@ -4,7 +4,11 @@ package clayburn.familymap.model;
  * Created by zachc_000 on 3/22/2018.
  */
 
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,10 +16,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import clayburn.familymap.app.R;
+
 /**
  * The global data holder for the entire app.
  */
 public class Model {
+
+    private static final String TAG = "MODEL";
+
+    public static final int SPOUSE_LINE_COLOR       = 0XFFB71C1C;
+    public static final int FAMILY_TREE_LINE_COLOR  = 0XFF1A237E;
+    public static final int LIFE_STORY_LINE_COLOR   = 0XFF64DD17;
 
     private static Model sModel;
 
@@ -154,6 +166,35 @@ public class Model {
                 .append(")")
                 .toString();
 
+    }
+
+    public PolylineOptions getSpouseLine(String eventID){
+        Log.d(TAG,"getSpouseLine(String) called");
+        return null;
+    }
+
+    public PolylineOptions[] getFamilyHistoryLines(String eventID){
+        Log.d(TAG,"getFamilyHistoryLines(String) called");
+        return null;
+    }
+
+    public PolylineOptions getLifeStoryLine(String eventID){
+        Log.d(TAG,"getLifeStoryLine(String) called");
+
+        String personID = mEvents.get(eventID).getPersonID();
+
+        PolylineOptions options = new PolylineOptions();
+
+        options.color(LIFE_STORY_LINE_COLOR);
+
+
+        for (Event event : mPersonEvents.get(personID)) {
+            options.add(
+                    new LatLng(event.getLatitude(),event.getLongitude())
+            );
+        }
+
+        return options;
     }
 
     public String getUserPersonID() {
