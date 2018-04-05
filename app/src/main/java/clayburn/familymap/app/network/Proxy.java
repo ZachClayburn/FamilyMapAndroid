@@ -76,6 +76,7 @@ public class Proxy {
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setDoInput(true);
+            connection.setConnectTimeout(5_000);
 
             OutputStream outputStream = connection.getOutputStream();
             ObjectTransmitter.send(request,outputStream);

@@ -4,14 +4,17 @@ package clayburn.familymap.model;
  * Created by zachc_000 on 3/22/2018.
  */
 
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -170,12 +173,88 @@ public class Model {
 
     public PolylineOptions getSpouseLine(String eventID){
         Log.d(TAG,"getSpouseLine(String) called");
-        return null;
+
+        String personID = mEvents.get(eventID).getPersonID();
+        String spouseID = mPersons.get(personID).getSpouse();
+        if (spouseID == null) {
+            return null;
+        }
+
+        Event event = mEvents.get(eventID);
+        LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
+
+        PolylineOptions options = new PolylineOptions();
+        options.add(position);
+        options.color(SPOUSE_LINE_COLOR);
+
+        position = getFirstLifeEvent(spouseID);
+        if (position == null) {
+            return null;
+        }
+        options.add(position);
+        return options;
     }
 
     public PolylineOptions[] getFamilyHistoryLines(String eventID){
         Log.d(TAG,"getFamilyHistoryLines(String) called");
+
+        Event event = mEvents.get(eventID);
+        LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
+
+        ArrayList<PolylineOptions> optionsArrayList = new ArrayList<>();
+
+        recursiveFamilyHistoryHelper(optionsArrayList,event.getPersonID(),position,10F);
+
+        return optionsArrayList.toArray(new PolylineOptions[optionsArrayList.size()]);
+    }
+
+    @Nullable
+    private LatLng getFirstLifeEvent(String personID){
+
+        Set<Event> personEvents = mPersonEvents.get(personID);
+        for (Event event : personEvents) {
+            //TODO Filter events
+            LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
+            return position;
+        }
         return null;
+    }
+
+    private void recursiveFamilyHistoryHelper(ArrayList<PolylineOptions> optionsArrayList,
+                                              String personID,
+                                              LatLng position,
+                                              float width){
+        PolylineOptions options;
+        Person person = mPersons.get(personID);
+        LatLng ancestorPosition;
+
+        //Paternal Side
+        if (person.getFather() != null) {
+            options = new PolylineOptions();
+            options.add(position);
+            options.color(FAMILY_TREE_LINE_COLOR);
+            options.width(width);
+            ancestorPosition = getFirstLifeEvent(person.getFather());
+            if (ancestorPosition != null) {
+                options.add(ancestorPosition);
+                optionsArrayList.add(options);
+                recursiveFamilyHistoryHelper(optionsArrayList,person.getFather(),ancestorPosition,width/1.5F);
+            }
+        }
+
+        //Maternal side
+        if (person.getMother() != null) {
+            options = new PolylineOptions();
+            options.add(position);
+            options.color(FAMILY_TREE_LINE_COLOR);
+            options.width(width);
+            ancestorPosition = getFirstLifeEvent(person.getMother());
+            if (ancestorPosition != null) {
+                options.add(ancestorPosition);
+                optionsArrayList.add(options);
+                recursiveFamilyHistoryHelper(optionsArrayList,person.getMother(),ancestorPosition,width/1.5F);
+            }
+        }
     }
 
     public PolylineOptions getLifeStoryLine(String eventID){
@@ -184,11 +263,10 @@ public class Model {
         String personID = mEvents.get(eventID).getPersonID();
 
         PolylineOptions options = new PolylineOptions();
-
         options.color(LIFE_STORY_LINE_COLOR);
 
-
         for (Event event : mPersonEvents.get(personID)) {
+            //TODO Add filtering
             options.add(
                     new LatLng(event.getLatitude(),event.getLongitude())
             );

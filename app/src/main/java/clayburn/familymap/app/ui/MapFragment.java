@@ -149,6 +149,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 if (!mInfoLayoutHidden){
                     lowerInfoLayout();
                 }
+                clearLines();
             }
         });
 
@@ -180,6 +181,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if(mInfoLayoutHidden){
             raiseInfoLayout();
         }
+        clearLines();
         mSelectedEventID = (String) marker.getTag();
 
         LatLng position = marker.getPosition();
@@ -221,9 +223,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .start();
         mInfoLayoutHidden = !mInfoLayoutHidden;
 
+    }
+
+    private void clearLines(){
+
         for (Polyline polyline : mPolyLines){
             polyline.remove();
         }
+        mPolyLines.clear();
     }
 
     private void raiseInfoLayout(){
