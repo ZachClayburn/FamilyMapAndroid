@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,7 +44,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String SELECTED_EVENT = "SELECTED_EVENT";
-    public static final String TAG = "MAP_FRAGMENT";
+    private static final String TAG = "MAP_FRAGMENT";
+    private static final int PERSON_ACTIVITY_REQUEST_CODE = 0;
 
     private String mSelectedEventID;
     private boolean mInfoLayoutHidden;
@@ -113,6 +115,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mEventDetailInformation = v.findViewById(R.id.event_detail_information);
 
         mInfoLayout = v.findViewById(R.id.info_layout);
+        mInfoLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(
+                        PersonActivity.newIntent(getContext(),mSelectedEventID)
+                );
+            }
+        });
         mInfoLayoutHidden = true;
 
         mPolyLines = new ArrayList<>();
@@ -162,7 +172,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void drawEventsOnMap(){
-        //TODO Add filter functionality in the Model
 
         for(String eventID : Model.get().getEventIDSet()){
 
