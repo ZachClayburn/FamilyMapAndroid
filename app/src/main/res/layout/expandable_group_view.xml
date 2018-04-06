@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/drop_down_arrow"
+        android:src="@drawable/ic_arrow_drop_down_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:contentDescription="@string/drop_down_arrow_descriptor" />
+
+    <TextView
+        android:id="@+id/expandable_group_text"
+        tools:text="Group Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_gravity="center_vertical"/>
+
+</LinearLayout>
