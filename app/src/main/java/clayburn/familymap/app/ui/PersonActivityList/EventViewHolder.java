@@ -4,7 +4,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import clayburn.familymap.app.R;
-import clayburn.familymap.app.ui.PersonActivity;
+import clayburn.familymap.model.ExpandableListItem;
+import clayburn.familymap.model.ListEvent;
 import clayburn.familymap.model.Model;
 
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;

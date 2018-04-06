@@ -16,22 +16,22 @@ import java.util.List;
 import static android.view.LayoutInflater.from;
 
 import clayburn.familymap.app.R;
+import clayburn.familymap.model.ExpandableListItem;
+import clayburn.familymap.model.PersonActivityGroup;
 
 /**
  * Created by zach on 4/6/18.
  */
 
-public class Adapter
+public class PersonActivityAdapter
         extends MultiTypeExpandableRecyclerViewAdapter<PersonActivityGroupHolder,ChildViewHolder> {
 
     public static final int PERSON_VIEW_TYPE = 3;
     public static final int EVENT_VIEW_TYPE = 4;
 
-    public static final String FAMILY_GROUP_TITLE = "family";
-    public static final String EVENT_GROUP_TITLE = "event";
     public static final String TAG = "PERSON_ACTIVITY_ADAPTER";
 
-    public Adapter(List<? extends ExpandableGroup> groups) {
+    public PersonActivityAdapter(List<? extends ExpandableGroup> groups) {
         super(groups);
     }
 
@@ -89,8 +89,20 @@ public class Adapter
      * @param childIndex   the index of this child within it's {@link ExpandableGroup}
      */
     @Override
-    public void onBindChildViewHolder(ChildViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
+    public void onBindChildViewHolder(ChildViewHolder holder, int flatPosition,
+                                      ExpandableGroup group, int childIndex) {
+        int viewType = getItemViewType(flatPosition);
 
+        ExpandableListItem item = ((PersonActivityGroup) group).getItems().get(childIndex);
+
+        switch (viewType){
+            case PERSON_VIEW_TYPE:{
+                ((PersonViewHolder) holder).onBind(item);
+            }break;
+            case EVENT_VIEW_TYPE:{
+                ((EventViewHolder) holder).onBind(item);
+            }break;
+        }
     }
 
     /**
@@ -104,8 +116,9 @@ public class Adapter
      * @param group        The {@link ExpandableGroup} to be used to bind data to this {@link ChildViewHolder}
      */
     @Override
-    public void onBindGroupViewHolder(PersonActivityGroupHolder holder, int flatPosition, ExpandableGroup group) {
-
+    public void onBindGroupViewHolder(PersonActivityGroupHolder holder,
+                                      int flatPosition, ExpandableGroup group) {
+        holder.onBind(group);
     }
 
     /**
@@ -128,12 +141,12 @@ public class Adapter
     @Override
     public int getChildViewType(int position, ExpandableGroup group, int childIndex) {
         switch (group.getTitle()){
-            case FAMILY_GROUP_TITLE:
+            case PersonActivityGroup.FAMILY_GROUP_TITLE:
                 return PERSON_VIEW_TYPE;
-            case EVENT_GROUP_TITLE:
+            case PersonActivityGroup.EVENT_GROUP_TITLE:
                 return EVENT_VIEW_TYPE;
             default:
-                String er = "Illegal type in Adapter.getChildViewType";
+                String er = "Illegal type in PersonActivityAdapter.getChildViewType";
                 Log.e(TAG,er);
                 throw new RuntimeException(er);
 

@@ -1,4 +1,4 @@
-package clayburn.familymap.app.ui.PersonActivityList;
+package clayburn.familymap.model;
 
 import android.os.Parcel;
 
@@ -12,6 +12,9 @@ import java.util.List;
 
 public class PersonActivityGroup extends ExpandableGroup<ExpandableListItem> {
 
+
+    public static final String FAMILY_GROUP_TITLE = "family";
+    public static final String EVENT_GROUP_TITLE = "event";
 
     public PersonActivityGroup(String title, List<ExpandableListItem> items) {
         super(title, items);

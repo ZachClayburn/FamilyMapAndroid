@@ -1,4 +1,4 @@
-package clayburn.familymap.app.ui.PersonActivityList;
+package clayburn.familymap.model;
 
 import android.os.Parcel;
 

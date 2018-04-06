@@ -111,7 +111,7 @@ public class Proxy {
      * message if there was one.
      */
     public ServiceResponse getPersons(String authToken){
-        //TODO Add getPersons function
+
         return dataFetchHelper(authToken,"/person", AllPersonResponse.class);
     }
 
@@ -123,7 +123,7 @@ public class Proxy {
      * message if there was one.
      */
     public ServiceResponse getEvents(String authToken){
-        //TODO Add getEvents function
+
         return dataFetchHelper(authToken,"/event", AllEventResponse.class);
     }
 

@@ -4,6 +4,7 @@ package clayburn.familymap.model;
  * Created by zachc_000 on 3/22/2018.
  */
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -104,8 +106,13 @@ public class Model {
      * currently logged in user
      */
     public String getUsersRealName(){
-        String firstName = mPersons.get(mUserPersonID).getFirstName();
-        String lastName = mPersons.get(mUserPersonID).getLastName();
+        return getPersonFullName(mUserPersonID);
+    }
+
+    @NonNull
+    public String getPersonFullName(String personID) {
+        String firstName = mPersons.get(personID).getFirstName();
+        String lastName = mPersons.get(personID).getLastName();
 
         return firstName + " " + lastName;
     }
@@ -123,7 +130,7 @@ public class Model {
      * @param eventID The eventID of the Event who's location you desire
      * @return A LatLng with the coordinates of the given Event's location
      */
-    public LatLng getEventPosition(String eventID){
+    public LatLng getEventLocation(String eventID){
         Event event = mEvents.get(eventID);
         return new LatLng(event.getLatitude(),event.getLongitude());
     }
@@ -281,6 +288,24 @@ public class Model {
 
     public void setUserPersonID(String userPersonID) {
         mUserPersonID = userPersonID;
+    }
+
+    public List<ExpandableListItem> getEventList(String peronID){
+
+        List<ExpandableListItem> listItems = new ArrayList<>();
+        Set<Event> events = mPersonEvents.get(peronID);
+
+        for (Event event : events) {
+            listItems.add(
+                    new ListEvent(event.getEventID())
+            );
+        }
+
+        return listItems;
+    }
+
+    public List<ExpandableListItem> getFamilyList(String personID){
+        return null;
     }
 
     public Set<String> getEventTypes() {

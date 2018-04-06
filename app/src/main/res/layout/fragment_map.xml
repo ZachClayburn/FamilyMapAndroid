@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context="clayburn.familymap.app.ui.MapFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <fragment
         android:id="@+id/family_map"

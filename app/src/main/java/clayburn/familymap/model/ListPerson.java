@@ -1,4 +1,4 @@
-package clayburn.familymap.app.ui.PersonActivityList;
+package clayburn.familymap.model;
 
 import android.os.Parcel;
 import android.util.Log;
@@ -32,6 +32,14 @@ public class ListPerson implements ExpandableListItem {
             Log.e(TAG,er);
             throw new RuntimeException(er);
         }
+    }
+
+    public String getPersonID() {
+        return mPersonID;
+    }
+
+    public int getRelation() {
+        return mRelation;
     }
 
     protected ListPerson(Parcel in){
