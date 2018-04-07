@@ -1,9 +1,5 @@
 package clayburn.familymap.model;
 
-/**
- * Created by zachc_000 on 3/22/2018.
- */
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -20,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 
 import clayburn.familymap.app.R;
 
@@ -305,7 +302,54 @@ public class Model {
     }
 
     public List<ExpandableListItem> getFamilyList(String personID){
-        return null;
+
+        List<ExpandableListItem> listItems = new ArrayList<>();
+        final Person person = mPersons.get(personID);
+        String relationID;
+        ListPerson listPerson;
+        Predicate<Person> isParent;
+
+        //Get Parents
+        relationID = person.getFather();
+        if (relationID != null) {
+            listPerson = new ListPerson(relationID,ListPerson.PARENT);
+            listItems.add(listPerson);
+        }
+        relationID = person.getMother();
+        if (relationID != null) {
+            listPerson = new ListPerson(relationID,ListPerson.PARENT);
+            listItems.add(listPerson);
+        }
+
+        //Get Spouse
+        relationID = person.getSpouse();
+        if (relationID != null) {
+            listPerson = new ListPerson(relationID,ListPerson.SPOUSE);
+            listItems.add(listPerson);
+        }
+
+        //Get Children
+        switch (person.getGender()){
+            case "m": isParent = p -> personID.equals(p.getFather()); break;
+            case "f": isParent = p -> personID.equals(p.getMother()); break;
+            default:{
+                isParent = p -> false;
+                Log.e(TAG,"Person who's gender is neither m or f exists: " + personID);
+            }break;
+        }
+
+        for (String id : mPersons.keySet()) {
+            Person p = mPersons.get(id);
+            if (p == null)
+                continue;
+            if (isParent.test(p)){
+                listPerson = new ListPerson(id, ListPerson.CHILD);
+                listItems.add(listPerson);
+                break;
+            }
+        }
+
+        return listItems;
     }
 
     public Set<String> getEventTypes() {

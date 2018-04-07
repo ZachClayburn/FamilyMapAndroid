@@ -12,10 +12,6 @@ import clayburn.familymap.model.ExpandableListItem;
 import clayburn.familymap.model.ListPerson;
 import clayburn.familymap.model.Model;
 
-/**
- * Created by zach on 4/6/18.
- */
-
 public class PersonViewHolder extends ChildViewHolder {
 
     private AppCompatTextView mPersonName;

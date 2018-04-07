@@ -1,5 +1,6 @@
 package clayburn.familymap.app.ui.PersonActivityList;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,11 +11,9 @@ import clayburn.familymap.model.Model;
 
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
-/**
- * Created by zach on 4/5/18.
- */
-
 public class EventViewHolder extends ChildViewHolder {
+
+    private static final String TAG = "EVENT_VIEW_HOLDER";
 
     private TextView mEventDetails;
 
@@ -22,6 +21,7 @@ public class EventViewHolder extends ChildViewHolder {
 
     public EventViewHolder(View itemView) {
         super(itemView);
+        Log.d(TAG, "EventViewHolder constructor called");
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,6 +32,7 @@ public class EventViewHolder extends ChildViewHolder {
     }
 
     public void onBind(ExpandableListItem item){
+        Log.d(TAG,"EventViewHolder.onBind called");
         mEventID = ((ListEvent) item).getEventID();
         mEventDetails.setText(Model.get().getEventInfo(mEventID));
     }

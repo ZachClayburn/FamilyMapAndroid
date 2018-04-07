@@ -2,6 +2,7 @@ package clayburn.familymap.app.ui.PersonActivityList;
 
 import android.util.Log;
 import android.view.View;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,9 +12,7 @@ import clayburn.familymap.model.PersonActivityGroup;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
-/**
- * Created by zach on 4/5/18.
- */
+import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
 public class PersonActivityGroupHolder extends GroupViewHolder {
 
@@ -44,4 +43,31 @@ public class PersonActivityGroupHolder extends GroupViewHolder {
         }
     }
 
+    @Override
+    public void expand() {
+        animateArrowOpen();
+    }
+
+    @Override
+    public void collapse() {
+        animateArrowClosed();
+    }
+
+    private void animateArrowOpen(){
+        RotateAnimation rotate =
+                new RotateAnimation(360, 180, RELATIVE_TO_SELF,
+                        0.5f, RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(300);
+        rotate.setFillAfter(true);
+        mDropDownArrow.setAnimation(rotate);
+    }
+
+    private void animateArrowClosed(){
+        RotateAnimation rotate =
+                new RotateAnimation(180, 360, RELATIVE_TO_SELF,
+                        0.5f, RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(300);
+        rotate.setFillAfter(true);
+        mDropDownArrow.setAnimation(rotate);
+    }
 }
