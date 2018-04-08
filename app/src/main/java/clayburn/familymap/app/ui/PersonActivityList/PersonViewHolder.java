@@ -1,5 +1,6 @@
 package clayburn.familymap.app.ui.PersonActivityList;
 
+import android.content.Intent;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.widget.ImageView;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 import clayburn.familymap.app.R;
+import clayburn.familymap.app.ui.PersonActivity;
 import clayburn.familymap.model.ExpandableListItem;
 import clayburn.familymap.model.ListPerson;
 import clayburn.familymap.model.Model;
@@ -25,7 +27,8 @@ public class PersonViewHolder extends ChildViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO Create new PersonActivity
+                Intent intent = PersonActivity.newIntent(itemView.getContext(),mPersonID);
+                itemView.getContext().startActivity(intent);
             }
         });
         mGenderIcon = itemView.findViewById(R.id.person_activity_gender_icon);

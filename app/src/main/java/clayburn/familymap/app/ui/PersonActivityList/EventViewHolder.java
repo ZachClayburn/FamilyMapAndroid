@@ -1,5 +1,6 @@
 package clayburn.familymap.app.ui.PersonActivityList;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -25,7 +26,7 @@ public class EventViewHolder extends ChildViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO Create new PersonActivity with mEventID and itemView.getContext()
+                //TODO Create new EventActivity with mEventID and itemView.getContext()
             }
         });
         mEventDetails = itemView.findViewById(R.id.event_list_view_details);

@@ -2,6 +2,7 @@ package clayburn.familymap.app.ui;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,9 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -28,7 +32,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 
 import clayburn.familymap.app.R;
-import clayburn.familymap.model.Event;
 import clayburn.familymap.model.Model;
 
 /**
@@ -70,7 +73,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    interface OnFragmentInteractionListener {
 
     }
 
@@ -82,7 +85,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * @param eventID Parameter 1.
      * @return A new instance of fragment MapFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static MapFragment newInstance(@Nullable String eventID) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
@@ -99,6 +101,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (getArguments() != null) {
             mSelectedEventID = getArguments().getString(SELECTED_EVENT);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -114,18 +117,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mEventDetailInformation = v.findViewById(R.id.event_detail_information);
 
         mInfoLayout = v.findViewById(R.id.info_layout);
-        mInfoLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String personID = Model
-                        .get()
-                        .getEvents()
-                        .get(mSelectedEventID)
-                        .getPersonID();
-                startActivity(
-                        PersonActivity.newIntent(getContext(),personID)
-                );
-            }
+        mInfoLayout.setOnClickListener(v1 -> {
+            String personID = Model
+                    .get()
+                    .getEvents()
+                    .get(mSelectedEventID)
+                    .getPersonID();
+            startActivity(
+                    PersonActivity.newIntent(getContext(),personID)
+            );
         });
         mInfoLayoutHidden = true;
 
@@ -157,29 +157,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         drawEventsOnMap();
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                if (!mInfoLayoutHidden){
-                    lowerInfoLayout();
-                }
-                clearLines();
+        mMap.setOnMapClickListener(latLng -> {
+            if (!mInfoLayoutHidden){
+                lowerInfoLayout();
             }
+            clearLines();
         });
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                return selectEventMarker(marker);
-            }
-        });
+        mMap.setOnMarkerClickListener(this::selectEventMarker);
     }
 
     private void drawEventsOnMap(){
 
         for(String eventID : Model.get().getEventIDSet()){
 
-            Event event = Model.get().getEvents().get(eventID);
             LatLng position = Model.get().getEventLocation(eventID);
             float color = Model.get().getEventColor(eventID);
             BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(color);
@@ -254,5 +245,55 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .setDuration(300)
                 .start();
         mInfoLayoutHidden = !mInfoLayoutHidden;
+    }
+
+    /**
+     * Initialize the contents of the Fragment host's standard options menu.  You
+     * should place your menu items in to <var>menu</var>.  For this method
+     * to be called, you must have first called {@link #setHasOptionsMenu}.
+     *
+     * @param menu     The options menu in which you place your items.
+     * @param inflater The inflater to inflate the menu.
+     * @see #setHasOptionsMenu
+     * @see #onPrepareOptionsMenu
+     * @see #onOptionsItemSelected
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_map,menu);
+    }
+
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * The default implementation simply returns false to have the normal
+     * processing happen (calling the item's Runnable or sending a message to
+     * its Handler as appropriate).  You can use this method for any items
+     * for which you would like to do processing without those other
+     * facilities.
+     * <p>
+     * <p>Derived classes should call through to the base class for it to
+     * perform the default menu handling.
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to
+     * proceed, true to consume it here.
+     * @see #onCreateOptionsMenu
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.map_activity_filter:{
+                return true;
+            }
+            case R.id.map_activity_settings:{
+                return true;
+            }
+            case R.id.map_activity_search:{
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
