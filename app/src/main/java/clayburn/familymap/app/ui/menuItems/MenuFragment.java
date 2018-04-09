@@ -1,12 +1,14 @@
 package clayburn.familymap.app.ui.menuItems;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import clayburn.familymap.app.R;
 
@@ -19,6 +21,8 @@ import clayburn.familymap.app.R;
 public class MenuFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+    protected AppCompatTextView mOptionName;
+    protected TextView mOptionDetail;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -26,10 +30,17 @@ public class MenuFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_menu, container, false);
+        View v = inflater.inflate(R.layout.fragment_menu, container, false);
+        getOptionViews(v);
+        return v;
+    }
+
+    protected void getOptionViews(View v) {
+        mOptionName = v.findViewById(R.id.menu_fragment_option_name);
+        mOptionDetail = v.findViewById(R.id.menu_fragment_option_detail);
     }
 
     @Override
@@ -42,6 +53,44 @@ public class MenuFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+    /**
+     * Set the string of the OptionName TextView
+     * @param text A CharSequence that contains the Name of the option that this MenuFragment will
+     *             control
+     */
+    public void setOptionName(CharSequence text){
+        mOptionName.setText(text);
+    }
+
+    /**
+     * Set the string of the OptionName TextView
+     * @param resid The resource id for the string resource that is the Name of the option that this
+     *             MenuFragment will control
+     */
+    public void setOptionName(int resid){
+        mOptionName.setText(resid);
+    }
+
+
+    /**
+     * Set the string of the OptionName TextView
+     * @param text A CharSequence that contains a detailed description of the option that this
+     *             MenuFragment will control
+     */
+    public void setOptionDetail(CharSequence text){
+        mOptionDetail.setText(text);
+    }
+
+    /**
+     * Set the string of the OptionDetail TextView
+     * @param resid The resource id for the string resource that is a detailed description of the
+     *             option that this MenuFragment will control
+     */
+    public void setOptionDetail(int resid){
+        mOptionDetail.setText(resid);
+    }
+
 
     @Override
     public void onDetach() {
@@ -64,7 +113,6 @@ public class MenuFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onOptionChanged();
     }
 }

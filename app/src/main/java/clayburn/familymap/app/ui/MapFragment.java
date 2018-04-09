@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -48,6 +49,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final String SELECTED_EVENT = "SELECTED_EVENT";
     private static final String TAG = "MAP_FRAGMENT";
     private static final int PERSON_ACTIVITY_REQUEST_CODE = 0;
+    private static final int SETTINGS_ACTIVITY_REQUEST_CODE = 0;
 
     private String mSelectedEventID;
     private boolean mInfoLayoutHidden;
@@ -287,6 +289,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 return true;
             }
             case R.id.map_activity_settings:{
+                Intent intent = SettingsActivity.newIntent(requireContext());
+                startActivityForResult(intent,SETTINGS_ACTIVITY_REQUEST_CODE);
                 return true;
             }
             case R.id.map_activity_search:{
@@ -294,6 +298,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Receive the result from a previous call to
+     * {@link #startActivityForResult(Intent, int)}.
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode  The integer result code returned by the child activity
+     *                    through its setResult().
+     * @param data        An Intent, which can return result data to the caller
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case SETTINGS_ACTIVITY_REQUEST_CODE:{
+                if (SettingsActivity.checkDataHasChanged(data)){
+                    Toast.makeText(requireContext(),"Settings have changed", Toast.LENGTH_SHORT);
+                }
+            }
         }
     }
 }
