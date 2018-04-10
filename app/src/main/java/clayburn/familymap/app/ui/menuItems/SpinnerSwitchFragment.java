@@ -3,7 +3,6 @@ package clayburn.familymap.app.ui.menuItems;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.ArrayRes;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,8 +36,13 @@ public class SpinnerSwitchFragment extends SpinnerFragment {
     }
 
     @Override
-    public void setOptionSpinnerListener(@ArrayRes int contentListsResID, MenuSpinnerAction action) {
-        super.setOptionSpinnerListener(contentListsResID, action);
+    public void setOptionSpinnerList(@ArrayRes int contentListsResID, int contentSelection) {
+        super.setOptionSpinnerList(contentListsResID, contentSelection);
+    }
+
+    @Override
+    public void setOptionSpinnerAction(MenuSpinnerAction action) {
+        super.setOptionSpinnerAction(action);
     }
 
     @Override

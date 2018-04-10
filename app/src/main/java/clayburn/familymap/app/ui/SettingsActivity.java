@@ -33,7 +33,8 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
     }
 
     public static boolean checkDataHasChanged(Intent intent){
-        return intent.getBooleanExtra(OPTIONS_HAVE_CHANGED, false);
+
+        return intent != null && intent.getBooleanExtra(OPTIONS_HAVE_CHANGED, false);
     }
 
     @Override
@@ -55,13 +56,8 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
             mFM.beginTransaction()
                     .add(R.id.life_story_fragment,mLifeStoryFragment)
                     .commit();
-            ((SpinnerSwitchFragment) mLifeStoryFragment).setOptionSwitchListener((buttonView, isChecked) -> {
-                Boolean IsChecked = isChecked;
-                Toast.makeText(SettingsActivity.this,IsChecked.toString(),Toast.LENGTH_SHORT).show();
-            });
-            ((SpinnerSwitchFragment) mLifeStoryFragment).setOptionSpinnerListener(R.array.line_color_names, selection ->
-                    Toast.makeText(SettingsActivity.this,selection,Toast.LENGTH_SHORT).show()
-            );
+/*
+*/
         }
         if (mFamilyTreeFragment == null) {
             mFamilyTreeFragment = new SpinnerSwitchFragment();
@@ -97,6 +93,28 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         }
 
 
+    }
+
+
+    /**
+     * This is the fragment-orientated version of {@link #onResume()} that you
+     * can override to perform operations in the Activity at the same point
+     * where its fragments are resumed.  Be sure to always call through to
+     * the super-class.
+     */
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        //TODO Properly initialize these fields
+        //TODO Implement methods on Model to save all of these settings
+        ((SpinnerSwitchFragment) mLifeStoryFragment).setOptionSwitchListener((buttonView, isChecked) -> {
+            Boolean IsChecked = isChecked;
+            Toast.makeText(SettingsActivity.this,IsChecked.toString(),Toast.LENGTH_SHORT).show();
+        });
+        ((SpinnerSwitchFragment) mLifeStoryFragment).setOptionSpinnerList(R.array.line_color_names, 0);
+
+        ((SpinnerSwitchFragment) mLifeStoryFragment).setOptionSpinnerAction(selection ->
+                Toast.makeText(SettingsActivity.this,selection,Toast.LENGTH_SHORT).show());
     }
 
     @Override

@@ -4,7 +4,6 @@ package clayburn.familymap.app.ui.menuItems;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.ArrayRes;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,10 +43,9 @@ public class SpinnerFragment extends MenuFragment implements AdapterView.OnItemS
     protected void getOptionViews(View v) {
         super.getOptionViews(v);
         mOptionSpinner = v.findViewById(R.id.option_spinner);
-        mOptionSpinner.setOnItemSelectedListener(this);
     }
 
-    public void setOptionSpinnerListener(@ArrayRes int contentListsResID, MenuSpinnerAction action){
+    public void setOptionSpinnerList(@ArrayRes int contentListsResID, int contentSelection){
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 requireContext(),
                 contentListsResID,
@@ -55,9 +53,17 @@ public class SpinnerFragment extends MenuFragment implements AdapterView.OnItemS
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mOptionSpinner.setAdapter(adapter);
+        mOptionSpinner.setSelected(false);
+        mOptionSpinner.setSelection(contentSelection,true);
+        mOptionSpinner.setOnItemSelectedListener(this);
         //TODO Set the value to the current selection
+    }
+
+    public void setOptionSpinnerAction(MenuSpinnerAction action){
         mAction = action;
     }
+
+
 
     /**
      * <p>Callback method to be invoked when an item in this view has been
@@ -80,11 +86,7 @@ public class SpinnerFragment extends MenuFragment implements AdapterView.OnItemS
         if (mAction != null) {
             mAction.saveSelection(selection.toString());
             optionChanged();
-            return;
         }
-        RuntimeException e = new RuntimeException("A callback was never set");
-        Log.e(TAG, "onItemSelected: mAction was never set!",e);
-        throw e;
     }
 
     /**

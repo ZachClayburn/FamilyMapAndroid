@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -317,7 +319,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         switch (requestCode){
             case SETTINGS_ACTIVITY_REQUEST_CODE:{
                 if (SettingsActivity.checkDataHasChanged(data)){
-                    Toast.makeText(requireContext(),"Settings have changed", Toast.LENGTH_SHORT);
+                    Toast.makeText(requireContext(),"Settings have changed", Toast.LENGTH_SHORT).show();
                 }
             }
         }
