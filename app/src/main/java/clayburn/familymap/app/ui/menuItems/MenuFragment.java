@@ -18,11 +18,23 @@ import clayburn.familymap.app.R;
  * {@link MenuFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class MenuFragment extends Fragment {
+public class MenuFragment extends Fragment implements View.OnClickListener{
 
     private OnFragmentInteractionListener mListener;
     protected AppCompatTextView mOptionName;
     protected TextView mOptionDetail;
+    protected OnClickAction mClickAction;
+
+    /**
+     * The interface for actions that will be performed on click within the fragment.
+     */
+    public interface OnClickAction{
+
+        /**
+         * Perform the action needed when a user clicks on the fragment
+         */
+        void clickAction();
+    }
 
     public MenuFragment() {
         // Required empty public constructor
@@ -91,6 +103,14 @@ public class MenuFragment extends Fragment {
         mOptionDetail.setText(resid);
     }
 
+    /**
+     * Set the action to be performed upon the fragment being clicked.
+     * @param action
+     */
+    public void setClickAction(OnClickAction action){
+        mClickAction = action;
+    }
+
 
     @Override
     public void onDetach() {
@@ -114,5 +134,18 @@ public class MenuFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onOptionChanged();
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        if (mClickAction != null) {
+            mClickAction.clickAction();
+            optionChanged();
+        }
     }
 }

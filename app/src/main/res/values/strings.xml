@@ -17,8 +17,8 @@
     <string name="title_activity_maps">Map</string>
 
     <!-- MapFragment Strings -->
-    <string name="person_icon_support_information">Person Icon</string>
     <string name="title_activity_person">PersonActivity</string>
+    <string name="person_icon_support_information">Person Icon</string>
     <string name="action_settings">Settings</string>
     <string name="event_list_view_image">A google maps marker</string>
     <string name="map_activity_search_title">Search</string>
@@ -36,7 +36,18 @@
 
     <!-- SettingsActivityStrings -->
     <string name="title_activity_settings">Settings</string>
+    <string name="option_name_life_story">Life Story Lines</string>
+    <string name="option_detail_life_story">Lines showing a person\'s life story</string>
+    <string name="option_name_family_tree">Family Tree Lines</string>
+    <string name="option_detail_family_tree">Lines showing a person\'s family tree</string>
+    <string name="option_name_spouse">Spouse Lines</string>
+    <string name="option_detail_spouse">Lines connecting to a person\'s spouse</string>
+    <string name="option_name_map_type">Map Type</string>
+    <string name="option_detail_map_type">Background map type</string>
+    <string name="option_name_sync_data">Re-Sync Data</string>
+    <string name="option_detail_sync_data">Re-download FamilyMap data from servers</string>
+    <string name="option_name_log_out">Log Out</string>
+    <string name="option_detail_log_out">Return to the Log in Screen</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

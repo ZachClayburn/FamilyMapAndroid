@@ -56,7 +56,6 @@ public class SpinnerFragment extends MenuFragment implements AdapterView.OnItemS
         mOptionSpinner.setSelected(false);
         mOptionSpinner.setSelection(contentSelection,true);
         mOptionSpinner.setOnItemSelectedListener(this);
-        //TODO Set the value to the current selection
     }
 
     public void setOptionSpinnerAction(MenuSpinnerAction action){
@@ -81,10 +80,9 @@ public class SpinnerFragment extends MenuFragment implements AdapterView.OnItemS
      */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        CharSequence selection = (CharSequence) parent.getItemAtPosition(position);
-        Log.d(TAG, "onItemSelected: " + selection + " selected");
+        Log.d(TAG, "onItemSelected: " + position + " selected");
         if (mAction != null) {
-            mAction.saveSelection(selection.toString());
+            mAction.saveSelection(position);
             optionChanged();
         }
     }
@@ -101,7 +99,16 @@ public class SpinnerFragment extends MenuFragment implements AdapterView.OnItemS
         Log.d(TAG, "onNothingSelected called");
     }
 
+    /**
+     * An interface that is implemented to change the behavior of the menu spinner, allowing it to
+     * save different options.
+     */
     public interface MenuSpinnerAction{
-        void saveSelection(String selection);
+
+        /**
+         * Save the selection of the spinner
+         * @param position The position of the current selection
+         */
+        void saveSelection(Integer position);
     }
 }

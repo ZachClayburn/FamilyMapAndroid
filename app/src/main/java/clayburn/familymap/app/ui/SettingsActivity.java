@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import clayburn.familymap.app.R;
@@ -107,14 +105,70 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         super.onResumeFragments();
         //TODO Properly initialize these fields
         //TODO Implement methods on Model to save all of these settings
-        ((SpinnerSwitchFragment) mLifeStoryFragment).setOptionSwitchListener((buttonView, isChecked) -> {
+        SpinnerSwitchFragment ssFragment;
+        SpinnerFragment sFragment;
+        MenuFragment mFragment;
+        //Life story options
+        ssFragment = (SpinnerSwitchFragment) mLifeStoryFragment;
+        ssFragment.setOptionName(R.string.option_name_life_story);
+        ssFragment.setOptionDetail(R.string.option_detail_life_story);
+        ssFragment.setOptionSwitchListener((buttonView, isChecked) -> {
             Boolean IsChecked = isChecked;
             Toast.makeText(SettingsActivity.this,IsChecked.toString(),Toast.LENGTH_SHORT).show();
         });
-        ((SpinnerSwitchFragment) mLifeStoryFragment).setOptionSpinnerList(R.array.line_color_names, 0);
+        ssFragment.setOptionSpinnerList(R.array.line_color_names, 0);
 
-        ((SpinnerSwitchFragment) mLifeStoryFragment).setOptionSpinnerAction(selection ->
-                Toast.makeText(SettingsActivity.this,selection,Toast.LENGTH_SHORT).show());
+        ssFragment.setOptionSpinnerAction(position ->
+                Toast.makeText(SettingsActivity.this,"Life story spinner",Toast.LENGTH_SHORT).show());
+
+        //Family tree options
+        ssFragment = (SpinnerSwitchFragment) mFamilyTreeFragment;
+        ssFragment.setOptionName(R.string.option_name_family_tree);
+        ssFragment.setOptionDetail(R.string.option_detail_family_tree);
+        ssFragment.setOptionSwitchListener((buttonView, isChecked) -> {
+            Boolean IsChecked = isChecked;
+            Toast.makeText(SettingsActivity.this,IsChecked.toString(),Toast.LENGTH_SHORT).show();
+        });
+        ssFragment.setOptionSpinnerList(R.array.line_color_names, 0);
+
+        ssFragment.setOptionSpinnerAction(position ->
+                Toast.makeText(SettingsActivity.this,"Family tree spinner",Toast.LENGTH_SHORT).show());
+
+        //Spouse options
+        ssFragment = (SpinnerSwitchFragment) mSpouseFragment;
+        ssFragment.setOptionName(R.string.option_name_spouse);
+        ssFragment.setOptionDetail(R.string.option_detail_spouse);
+        ssFragment.setOptionSwitchListener((buttonView, isChecked) -> {
+            Boolean IsChecked = isChecked;
+            Toast.makeText(SettingsActivity.this,IsChecked.toString(),Toast.LENGTH_SHORT).show();
+        });
+        ssFragment.setOptionSpinnerList(R.array.line_color_names, 0);
+
+        ssFragment.setOptionSpinnerAction(position ->
+                Toast.makeText(SettingsActivity.this,"Spouse spinner",Toast.LENGTH_SHORT).show());
+
+        //Map Type options
+        sFragment = (SpinnerFragment) mMapTypeFragment;
+        sFragment.setOptionName(R.string.option_name_map_type);
+        sFragment.setOptionDetail(R.string.option_detail_map_type);
+        sFragment.setOptionSpinnerList(R.array.map_types, 0);
+
+        sFragment.setOptionSpinnerAction(position ->
+                Toast.makeText(SettingsActivity.this,"map type spinner",Toast.LENGTH_SHORT).show());
+
+        //Re-sync options
+        mFragment = (MenuFragment) mSyncDataFragment;
+        mFragment.setOptionName(R.string.option_name_sync_data);
+        mFragment.setOptionDetail(R.string.option_detail_sync_data);
+        mFragment.setClickAction(() ->
+                Toast.makeText(SettingsActivity.this,"Sync clicked",Toast.LENGTH_SHORT).show());
+
+        //Log out options
+        mFragment = (MenuFragment) mLogOutFragment;
+        mFragment.setOptionName(R.string.option_name_log_out);
+        mFragment.setOptionDetail(R.string.option_detail_log_out);
+        mFragment.setClickAction(() ->
+                Toast.makeText(SettingsActivity.this,"Log out clicked",Toast.LENGTH_SHORT).show());
     }
 
     @Override
