@@ -2,7 +2,6 @@ package clayburn.familymap.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -11,14 +10,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
-
-import clayburn.familymap.app.R;
 
 /**
  * The global data holder for the entire app.
@@ -27,9 +23,19 @@ public class Model {
 
     private static final String TAG = "MODEL";
 
-    public static final int SPOUSE_LINE_COLOR       = 0XFFB71C1C;
-    public static final int FAMILY_TREE_LINE_COLOR  = 0XFF1A237E;
-    public static final int LIFE_STORY_LINE_COLOR   = 0XFF64DD17;
+    public enum LineName {
+        lifeStoryLines,
+        familyTreeLines,
+        spouseLines
+    }
+
+    public static final String LIFE_STORY_LINES = "Life Story Lines";
+    public static final String FAMILY_TREE_LINES = "Family Trees Lines";
+    public static final String SPOUSE_LINES = "Spouse Lines";
+
+    private int mSpouseLineColor = 0XFFB71C1C;
+    private int mFamilyTreeLineColor = 0XFF1A237E;
+    private int mLifeStoryLineColor = 0XFF64DD17;
 
     private static Model sModel;
 
@@ -57,6 +63,14 @@ public class Model {
     private Map<String, Set<Event>> mPersonEvents;
     private Set<String> mEventTypes;
     private Map<String,Float> mEventColors;
+    private final int[] colors = {
+            0xFFB71C1C,//Red
+            0xFF2E7D32,//Green
+            0xFF0D47A1,//Blue
+            0xFFFFCA28 //Yellow
+    };
+    private Map<LineName, Boolean> mDrawLines;
+    private Map<LineName, Integer> mLineColorInds;
 
     private String mAuthToken;
     private String mUserPersonID;
@@ -70,6 +84,17 @@ public class Model {
     public void populateModel(Person[] persons, Event[] events){
         //TODO Finish this method
 
+        //Set up default map options
+        mDrawLines = new HashMap<>();
+        for (LineName name : LineName.values()) {
+            mDrawLines.put(name, true);
+        }
+
+        mLineColorInds = new HashMap<>();
+        mLineColorInds.put(LineName.lifeStoryLines,0);
+        mLineColorInds.put(LineName.familyTreeLines,1);
+        mLineColorInds.put(LineName.spouseLines,2);
+
         for (Person person : persons) {
             mPersons.put(person.getPersonID(),person);
         }
@@ -79,11 +104,10 @@ public class Model {
 
             mEventTypes.add(event.getEventType());
 
-            Set<Event> set = mPersonEvents.get(event.getPersonID());
-            if (set == null) {
-                set = new TreeSet<>(new Event.EventComparator());
-                mPersonEvents.put(event.getPersonID(),set);
-            }
+            Set<Event> set = mPersonEvents.computeIfAbsent(
+                    event.getPersonID(),
+                    k -> new TreeSet<>(new Event.EventComparator())
+            );
             set.add(event);
         }
 
@@ -162,21 +186,23 @@ public class Model {
      */
     public String getEventInfo(String eventID){
         Event event = mEvents.get(eventID);
-        return new StringBuilder()
-                .append(event.getEventType())
-                .append(": ")
-                .append(event.getCity())
-                .append(", ")
-                .append(event.getCountry())
-                .append(" (")
-                .append(event.getYear())
-                .append(")")
-                .toString();
+        return event.getEventType() +
+                ": " +
+                event.getCity() +
+                ", " +
+                event.getCountry() +
+                " (" +
+                event.getYear() +
+                ")";
 
     }
 
     public PolylineOptions getSpouseLine(String eventID){
         Log.d(TAG,"getSpouseLine(String) called");
+
+        if (!mDrawLines.get(LineName.spouseLines)){
+            return null;
+        }
 
         String personID = mEvents.get(eventID).getPersonID();
         String spouseID = mPersons.get(personID).getSpouse();
@@ -186,10 +212,11 @@ public class Model {
 
         Event event = mEvents.get(eventID);
         LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
+        int lineColor = colors[mLineColorInds.get(LineName.spouseLines)];
 
         PolylineOptions options = new PolylineOptions();
         options.add(position);
-        options.color(SPOUSE_LINE_COLOR);
+        options.color(lineColor);
 
         position = getFirstLifeEvent(spouseID);
         if (position == null) {
@@ -202,6 +229,10 @@ public class Model {
     public PolylineOptions[] getFamilyHistoryLines(String eventID){
         Log.d(TAG,"getFamilyHistoryLines(String) called");
 
+        if (!mDrawLines.get(LineName.familyTreeLines)){
+            return null;
+        }
+
         Event event = mEvents.get(eventID);
         LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
 
@@ -210,6 +241,44 @@ public class Model {
         recursiveFamilyHistoryHelper(optionsArrayList,event.getPersonID(),position,10F);
 
         return optionsArrayList.toArray(new PolylineOptions[optionsArrayList.size()]);
+    }
+
+    private void recursiveFamilyHistoryHelper(ArrayList<PolylineOptions> optionsArrayList,
+                                              String personID,
+                                              LatLng position,
+                                              float width){
+        PolylineOptions options;
+        Person person = mPersons.get(personID);
+        LatLng ancestorPosition;
+        int lineColor = colors[mLineColorInds.get(LineName.familyTreeLines)];
+
+        //Paternal Side
+        if (person.getFather() != null) {
+            options = new PolylineOptions();
+            options.add(position);
+            options.color(lineColor);
+            options.width(width);
+            ancestorPosition = getFirstLifeEvent(person.getFather());
+            if (ancestorPosition != null) {
+                options.add(ancestorPosition);
+                optionsArrayList.add(options);
+                recursiveFamilyHistoryHelper(optionsArrayList,person.getFather(),ancestorPosition,width/1.5F);
+            }
+        }
+
+        //Maternal side
+        if (person.getMother() != null) {
+            options = new PolylineOptions();
+            options.add(position);
+            options.color(lineColor);
+            options.width(width);
+            ancestorPosition = getFirstLifeEvent(person.getMother());
+            if (ancestorPosition != null) {
+                options.add(ancestorPosition);
+                optionsArrayList.add(options);
+                recursiveFamilyHistoryHelper(optionsArrayList,person.getMother(),ancestorPosition,width/1.5F);
+            }
+        }
     }
 
     @Nullable
@@ -224,50 +293,18 @@ public class Model {
         return null;
     }
 
-    private void recursiveFamilyHistoryHelper(ArrayList<PolylineOptions> optionsArrayList,
-                                              String personID,
-                                              LatLng position,
-                                              float width){
-        PolylineOptions options;
-        Person person = mPersons.get(personID);
-        LatLng ancestorPosition;
-
-        //Paternal Side
-        if (person.getFather() != null) {
-            options = new PolylineOptions();
-            options.add(position);
-            options.color(FAMILY_TREE_LINE_COLOR);
-            options.width(width);
-            ancestorPosition = getFirstLifeEvent(person.getFather());
-            if (ancestorPosition != null) {
-                options.add(ancestorPosition);
-                optionsArrayList.add(options);
-                recursiveFamilyHistoryHelper(optionsArrayList,person.getFather(),ancestorPosition,width/1.5F);
-            }
-        }
-
-        //Maternal side
-        if (person.getMother() != null) {
-            options = new PolylineOptions();
-            options.add(position);
-            options.color(FAMILY_TREE_LINE_COLOR);
-            options.width(width);
-            ancestorPosition = getFirstLifeEvent(person.getMother());
-            if (ancestorPosition != null) {
-                options.add(ancestorPosition);
-                optionsArrayList.add(options);
-                recursiveFamilyHistoryHelper(optionsArrayList,person.getMother(),ancestorPosition,width/1.5F);
-            }
-        }
-    }
-
     public PolylineOptions getLifeStoryLine(String eventID){
         Log.d(TAG,"getLifeStoryLine(String) called");
 
+        if (!mDrawLines.get(LineName.lifeStoryLines)){
+            return null;
+        }
+
         String personID = mEvents.get(eventID).getPersonID();
+        int lineColor = colors[mLineColorInds.get(LineName.lifeStoryLines)];
 
         PolylineOptions options = new PolylineOptions();
-        options.color(LIFE_STORY_LINE_COLOR);
+        options.color(lineColor);
 
         for (Event event : mPersonEvents.get(personID)) {
             //TODO Add filtering
