@@ -101,8 +101,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mSelectedEventID = getArguments().getString(SELECTED_EVENT);
+            //TODO Make the Event from arguments selected
         }
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true);//TODO Disable this from the EventActivity
     }
 
     @Override

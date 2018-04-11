@@ -20,9 +20,9 @@ import static clayburn.familymap.model.Model.LineName.*;
 public class SettingsActivity extends AppCompatActivity implements MenuFragment.OnFragmentInteractionListener{
 
     private static final String TAG = "SettingsActivity";
-    private static final String LINE_OPTIONS_HAVE_CHANGED = "LINE_OPTIONS_HAVE_CHANGED";
-    private static final String MAP_OPTIONS_HAVE_CHANGED ="MAP_OPTIONS_HAVE_CHANGED";
-    private static final String DATA_WAS_SYNCED = "DATA_WAS_SYNCED";
+    private static final String LINE_OPTIONS_HAVE_CHANGED = "clayburn.familymap.app.ui.line_options";
+    private static final String MAP_OPTIONS_HAVE_CHANGED ="clayburn.familymap.app.ui.map_options";
+    private static final String DATA_WAS_SYNCED = "clayburn.familymap.app.ui.data_options";
 
     private Fragment mLifeStoryFragment;
     private Fragment mFamilyTreeFragment;
@@ -130,7 +130,6 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
 
 
     }
-
 
     /**
      * This is the fragment-orientated version of {@link #onResume()} that you

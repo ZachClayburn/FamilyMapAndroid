@@ -3,7 +3,6 @@ package clayburn.familymap.app.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,13 +12,13 @@ import java.util.List;
 
 import clayburn.familymap.app.R;
 import clayburn.familymap.model.ExpandableListItem;
-import clayburn.familymap.app.ui.PersonActivityList.PersonActivityAdapter;
+import clayburn.familymap.app.ui.expandableRecyclerView.PersonActivityAdapter;
 import clayburn.familymap.model.Model;
 import clayburn.familymap.model.PersonActivityGroup;
 
 public class PersonActivity extends AppCompatActivity {
 
-    private static final String PERSON_ID = "clayburn.familyMap.app.ui.person_id";
+    private static final String PERSON_ID = "clayburn.familymap.app.ui.person_id";
 
     private RecyclerView mRecyclerView;
     private PersonActivityAdapter mAdapter;
@@ -27,9 +26,8 @@ public class PersonActivity extends AppCompatActivity {
     private String mPersonID;
 
     public static Intent newIntent(Context packageContext, String personID){
-        Intent intent = new Intent(packageContext,PersonActivity.class);
-        intent.putExtra(PERSON_ID,personID);
-        return intent;
+        return new Intent(packageContext,PersonActivity.class)
+                .putExtra(PERSON_ID,personID);
     }
 
     @Override
@@ -42,12 +40,9 @@ public class PersonActivity extends AppCompatActivity {
         }
 
         Intent intent = getIntent();
-
         if (intent.hasExtra(PERSON_ID)) {
             mPersonID = intent.getStringExtra(PERSON_ID);
         }
-
-
 
         mRecyclerView = findViewById(R.id.person_activity_recycler_view);
 

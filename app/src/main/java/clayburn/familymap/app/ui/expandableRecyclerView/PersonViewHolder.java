@@ -1,4 +1,4 @@
-package clayburn.familymap.app.ui.PersonActivityList;
+package clayburn.familymap.app.ui.expandableRecyclerView;
 
 import android.content.Intent;
 import android.support.v7.widget.AppCompatTextView;
