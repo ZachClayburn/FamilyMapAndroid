@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="70dp"
+    android:id="@+id/menu_fragment_layout"
     tools:context="clayburn.familymap.app.ui.menuItems.MenuFragment">
 
     <LinearLayout

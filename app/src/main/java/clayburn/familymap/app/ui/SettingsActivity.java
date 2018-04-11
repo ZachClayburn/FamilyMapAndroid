@@ -108,6 +108,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         SpinnerSwitchFragment ssFragment;
         SpinnerFragment sFragment;
         MenuFragment mFragment;
+
         //Life story options
         ssFragment = (SpinnerSwitchFragment) mLifeStoryFragment;
         ssFragment.setOptionName(R.string.option_name_life_story);

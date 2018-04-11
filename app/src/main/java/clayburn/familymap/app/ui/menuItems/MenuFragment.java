@@ -3,6 +3,7 @@ package clayburn.familymap.app.ui.menuItems;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
@@ -18,12 +19,12 @@ import clayburn.familymap.app.R;
  * {@link MenuFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class MenuFragment extends Fragment implements View.OnClickListener{
+public class MenuFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     protected AppCompatTextView mOptionName;
     protected TextView mOptionDetail;
-    protected OnClickAction mClickAction;
+    protected ConstraintLayout mLayout;
 
     /**
      * The interface for actions that will be performed on click within the fragment.
@@ -53,6 +54,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
     protected void getOptionViews(View v) {
         mOptionName = v.findViewById(R.id.menu_fragment_option_name);
         mOptionDetail = v.findViewById(R.id.menu_fragment_option_detail);
+        mLayout = v.findViewById(R.id.menu_fragment_layout);
     }
 
     @Override
@@ -105,10 +107,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
 
     /**
      * Set the action to be performed upon the fragment being clicked.
-     * @param action
+     * @param action The OnClickAction that will listen to clicks on the view.
      */
     public void setClickAction(OnClickAction action){
-        mClickAction = action;
+        mLayout.setOnClickListener(v ->{
+            action.clickAction();
+            optionChanged();
+        });
     }
 
 
@@ -136,16 +141,4 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
         void onOptionChanged();
     }
 
-    /**
-     * Called when a view has been clicked.
-     *
-     * @param v The view that was clicked.
-     */
-    @Override
-    public void onClick(View v) {
-        if (mClickAction != null) {
-            mClickAction.clickAction();
-            optionChanged();
-        }
-    }
 }

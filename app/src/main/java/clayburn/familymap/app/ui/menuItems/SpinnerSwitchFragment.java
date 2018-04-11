@@ -54,11 +54,7 @@ public class SpinnerSwitchFragment extends SpinnerFragment {
     public void setOptionSwitchListener(CompoundButton.OnCheckedChangeListener listener) {
         mOptionSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             listener.onCheckedChanged(buttonView,isChecked);
-            toggleSpinnerActive(isChecked);
             optionChanged();
         });
-    }
-    private void toggleSpinnerActive(boolean isActive){
-        mOptionSpinner.setActivated(isActive);
     }
 }
