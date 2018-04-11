@@ -83,7 +83,7 @@ public class SpinnerFragment extends MenuFragment implements AdapterView.OnItemS
         Log.d(TAG, "onItemSelected: " + position + " selected");
         if (mAction != null) {
             mAction.saveSelection(position);
-            optionChanged();
+            optionChanged(mSource);
         }
     }
 

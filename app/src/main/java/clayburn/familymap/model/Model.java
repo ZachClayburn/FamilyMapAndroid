@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -40,6 +41,8 @@ public class Model {
         mEvents = new HashMap<>();
         mPersonEvents = new HashMap<>();
         mEventTypes = new HashSet<>();
+        initLineSettings();
+        initMapSettings();
     }
 
     /**
@@ -71,17 +74,6 @@ public class Model {
     public void populateModel(Person[] persons, Event[] events){
         //TODO Finish this method
 
-        //Set up default map options
-        mLineDrawn = new HashMap<>();
-        for (LineName name : LineName.values()) {
-            mLineDrawn.put(name, true);
-        }
-
-        mLineColorInds = new HashMap<>();
-        mLineColorInds.put(LineName.lifeStoryLines,0);
-        mLineColorInds.put(LineName.familyTreeLines,1);
-        mLineColorInds.put(spouseLines,2);
-
         for (Person person : persons) {
             mPersons.put(person.getPersonID(),person);
         }
@@ -109,7 +101,7 @@ public class Model {
 
     // Line Settings Methods------------------------------------------------------------------------
 
-    private final int[] colors = {
+    private final int[] COLORS = {
             0xFFB71C1C,//Red
             0xFF2E7D32,//Green
             0xFF0D47A1,//Blue
@@ -123,8 +115,20 @@ public class Model {
     private Map<LineName, Boolean> mLineDrawn;
     private Map<LineName, Integer> mLineColorInds;
 
+    private void initLineSettings() {
+        //Set up default map options
+        mLineDrawn = new HashMap<>();
+        for (LineName name : LineName.values()) {
+            mLineDrawn.put(name, true);
+        }
 
-    public int getLineClolorSelection(LineName lineName){
+        mLineColorInds = new HashMap<>();
+        mLineColorInds.put(LineName.lifeStoryLines,0);
+        mLineColorInds.put(LineName.familyTreeLines,1);
+        mLineColorInds.put(spouseLines,2);
+    }
+
+    public int getLineColorSelection(LineName lineName){
         return mLineColorInds.get(lineName);
     }
 
@@ -139,6 +143,36 @@ public class Model {
     public void setLineDrawn(LineName lineName, boolean isDrawn){
         mLineDrawn.replace(lineName,isDrawn);
     }
+
+
+    //Map Style Setting Methods---------------------------------------------------------------------
+
+    private final int[] MAP_TYPES = {
+            GoogleMap.MAP_TYPE_NORMAL,
+            GoogleMap.MAP_TYPE_HYBRID,
+            GoogleMap.MAP_TYPE_SATELLITE,
+            GoogleMap.MAP_TYPE_TERRAIN
+    };
+    private int mMapTypeSelection;
+
+    private void initMapSettings() {
+        mMapTypeSelection = 0;
+    }
+
+    public int getCurrentMapType() {
+        return MAP_TYPES[mMapTypeSelection];
+    }
+
+    public void setCurrentMapType(int selection) {
+        mMapTypeSelection = selection;
+    }
+
+    public int getCurrentMapTypeIndex(){
+        return mMapTypeSelection;
+    }
+
+    //Unorganized Mess------------------------------------------------------------------------------
+    //TODO Fix this
 
     /**
      * Get the real name of the logged in user. Retrieves the first and last name of the currently
@@ -232,7 +266,7 @@ public class Model {
 
         Event event = mEvents.get(eventID);
         LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
-        int lineColor = colors[mLineColorInds.get(spouseLines)];
+        int lineColor = COLORS[mLineColorInds.get(spouseLines)];
 
         PolylineOptions options = new PolylineOptions();
         options.add(position);
@@ -270,7 +304,7 @@ public class Model {
         PolylineOptions options;
         Person person = mPersons.get(personID);
         LatLng ancestorPosition;
-        int lineColor = colors[mLineColorInds.get(familyTreeLines)];
+        int lineColor = COLORS[mLineColorInds.get(familyTreeLines)];
 
         //Paternal Side
         if (person.getFather() != null) {
@@ -321,7 +355,7 @@ public class Model {
         }
 
         String personID = mEvents.get(eventID).getPersonID();
-        int lineColor = colors[mLineColorInds.get(lifeStoryLines)];
+        int lineColor = COLORS[mLineColorInds.get(lifeStoryLines)];
 
         PolylineOptions options = new PolylineOptions();
         options.color(lineColor);

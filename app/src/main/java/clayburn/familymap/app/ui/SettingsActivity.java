@@ -2,6 +2,7 @@ package clayburn.familymap.app.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +20,9 @@ import static clayburn.familymap.model.Model.LineName.*;
 public class SettingsActivity extends AppCompatActivity implements MenuFragment.OnFragmentInteractionListener{
 
     private static final String TAG = "SettingsActivity";
-    private static final String OPTIONS_HAVE_CHANGED = "options_have_changed";
+    private static final String LINE_OPTIONS_HAVE_CHANGED = "LINE_OPTIONS_HAVE_CHANGED";
+    private static final String MAP_OPTIONS_HAVE_CHANGED ="MAP_OPTIONS_HAVE_CHANGED";
+    private static final String DATA_WAS_SYNCED = "DATA_WAS_SYNCED";
 
     private Fragment mLifeStoryFragment;
     private Fragment mFamilyTreeFragment;
@@ -29,13 +32,45 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
     private Fragment mLogOutFragment;
     private FragmentManager mFM;
 
+    private boolean mLineOptionsHaveChanged = false;
+    private boolean mMapOptionsHaveChanged = false;
+    private boolean mDataWasSynced = false;
+
     public static Intent newIntent(Context packageContext){
         return new Intent(packageContext,SettingsActivity.class);
     }
 
-    public static boolean checkDataHasChanged(Intent intent){
+    /**
+     * Check if the options pertaining to lines were changed during the SettingsActivity
+     * @param intent The intent returned as a result from the SettingsActivity
+     * @return True if line option were changed, false otherwise
+     */
+    public static boolean lineOptionsHaveChanged(Intent intent){
 
-        return intent != null && intent.getBooleanExtra(OPTIONS_HAVE_CHANGED, false);
+        return intent != null
+                && intent.getBooleanExtra(LINE_OPTIONS_HAVE_CHANGED, false);
+    }
+
+    /**
+     * Check if the options pertaining to the map were changed during the SettingsActivity
+     * @param intent The intent returned as a result from the SettingsActivity
+     * @return True if map option were changed, false otherwise
+     */
+    public static boolean mapOptionsHaveChanged(Intent intent){
+
+        return intent != null
+                && intent.getBooleanExtra(MAP_OPTIONS_HAVE_CHANGED, false);
+    }
+
+    /**
+     * Check if the data was synced during the SettingsActivity
+     * @param intent The intent returned as a result from the SettingsActivity
+     * @return True if data was synced, false otherwise
+     */
+    public static boolean dataWasSynced(Intent intent){
+
+        return intent != null
+                && intent.getBooleanExtra(DATA_WAS_SYNCED, false);
     }
 
     @Override
@@ -117,6 +152,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         ssFragment = (SpinnerSwitchFragment) mLifeStoryFragment;
         ssFragment.setOptionName(R.string.option_name_life_story);
         ssFragment.setOptionDetail(R.string.option_detail_life_story);
+        ssFragment.setSource(LINE_OPTIONS_HAVE_CHANGED);
 
         ssFragment.setOptionSwitchState(model.isLineDrawn(lifeStoryLines));
         ssFragment.setOptionSwitchListener((buttonView, isChecked) ->
@@ -125,7 +161,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
 
         ssFragment.setOptionSpinnerList(
                 R.array.line_color_names,
-                model.getLineClolorSelection(lifeStoryLines)
+                model.getLineColorSelection(lifeStoryLines)
         );
         ssFragment.setOptionSpinnerAction(position ->
                 model.setLineColorSelection(lifeStoryLines,position)
@@ -135,6 +171,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         ssFragment = (SpinnerSwitchFragment) mFamilyTreeFragment;
         ssFragment.setOptionName(R.string.option_name_family_tree);
         ssFragment.setOptionDetail(R.string.option_detail_family_tree);
+        ssFragment.setSource(LINE_OPTIONS_HAVE_CHANGED);
 
         ssFragment.setOptionSwitchState(model.isLineDrawn(familyTreeLines));
         ssFragment.setOptionSwitchListener((buttonView, isChecked) ->
@@ -143,7 +180,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
 
         ssFragment.setOptionSpinnerList(
                 R.array.line_color_names,
-                model.getLineClolorSelection(familyTreeLines)
+                model.getLineColorSelection(familyTreeLines)
         );
         ssFragment.setOptionSpinnerAction(position ->
                 model.setLineColorSelection(familyTreeLines,position)
@@ -153,6 +190,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         ssFragment = (SpinnerSwitchFragment) mSpouseFragment;
         ssFragment.setOptionName(R.string.option_name_spouse);
         ssFragment.setOptionDetail(R.string.option_detail_spouse);
+        ssFragment.setSource(LINE_OPTIONS_HAVE_CHANGED);
 
         ssFragment.setOptionSwitchState(model.isLineDrawn(spouseLines));
         ssFragment.setOptionSwitchListener((buttonView, isChecked) ->
@@ -161,7 +199,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
 
         ssFragment.setOptionSpinnerList(
                 R.array.line_color_names,
-                model.getLineClolorSelection(spouseLines)
+                model.getLineColorSelection(spouseLines)
         );
         ssFragment.setOptionSpinnerAction(position ->
                 model.setLineColorSelection(spouseLines, position)
@@ -171,32 +209,46 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         sFragment = (SpinnerFragment) mMapTypeFragment;
         sFragment.setOptionName(R.string.option_name_map_type);
         sFragment.setOptionDetail(R.string.option_detail_map_type);
+        sFragment.setSource(MAP_OPTIONS_HAVE_CHANGED);
 
-        sFragment.setOptionSpinnerList(R.array.map_types, 0);
-        sFragment.setOptionSpinnerAction(position ->
-                Toast.makeText(SettingsActivity.this,"map type spinner",Toast.LENGTH_SHORT).show());
+        sFragment.setOptionSpinnerList(R.array.map_types, model.getCurrentMapTypeIndex());
+        sFragment.setOptionSpinnerAction(model::setCurrentMapType);
 
         //Re-sync options
         mFragment = (MenuFragment) mSyncDataFragment;
         mFragment.setOptionName(R.string.option_name_sync_data);
-
         mFragment.setOptionDetail(R.string.option_detail_sync_data);
-        mFragment.setClickAction(() ->
+        mFragment.setSource(DATA_WAS_SYNCED);
+
+        mFragment.setClickAction(() ->//TODO Set this up correctly
                 Toast.makeText(SettingsActivity.this,"Sync clicked",Toast.LENGTH_SHORT).show());
 
         //Log out options
         mFragment = (MenuFragment) mLogOutFragment;
         mFragment.setOptionName(R.string.option_name_log_out);
-
         mFragment.setOptionDetail(R.string.option_detail_log_out);
-        mFragment.setClickAction(() ->
+
+        mFragment.setClickAction(() ->//TODO Set this up correctly
                 Toast.makeText(SettingsActivity.this,"Log out clicked",Toast.LENGTH_SHORT).show());
     }
 
     @Override
-    public void onOptionChanged() {
+    public void onOptionChanged(@Nullable String source) {
+
+        if (source == null) {
+            source = "";
+        }
+
+        switch (source){
+            case LINE_OPTIONS_HAVE_CHANGED: mLineOptionsHaveChanged = true; break;
+            case MAP_OPTIONS_HAVE_CHANGED: mMapOptionsHaveChanged = true; break;
+            case DATA_WAS_SYNCED: mDataWasSynced = true; break;
+        }
+
         Intent data = new Intent();
-        data.putExtra(OPTIONS_HAVE_CHANGED,true);
+        data.putExtra(LINE_OPTIONS_HAVE_CHANGED, mLineOptionsHaveChanged);
+        data.putExtra(MAP_OPTIONS_HAVE_CHANGED,mMapOptionsHaveChanged);
+        data.putExtra(DATA_WAS_SYNCED,mDataWasSynced);
         setResult(RESULT_OK,data);
     }
 }

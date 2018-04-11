@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -16,9 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -158,6 +155,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMapType(Model.get().getCurrentMapType());
 
         drawEventsOnMap();
 
@@ -294,6 +292,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             case R.id.map_activity_settings:{
                 Intent intent = SettingsActivity.newIntent(requireContext());
                 startActivityForResult(intent,SETTINGS_ACTIVITY_REQUEST_CODE);
+                if (Model.get().getCurrentMapType() != mMap.getMapType()){
+                    mMap.setMapType(Model.get().getCurrentMapType());
+                }
                 return true;
             }
             case R.id.map_activity_search:{
@@ -319,13 +320,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case SETTINGS_ACTIVITY_REQUEST_CODE:{
-                if (SettingsActivity.checkDataHasChanged(data)){
-                    clearLines();
-                    if (mSelectedEventID != null) {
-                        drawRelationLines();
-                    }
-                }
+                handleSettingsActivityResult(data);
             }
+        }
+    }
+
+    private void handleSettingsActivityResult(Intent data){
+        if (SettingsActivity.dataWasSynced(data)){
+            clearLines();
+            mMap.clear();
+            drawEventsOnMap();
+        }
+        if (SettingsActivity.lineOptionsHaveChanged(data)){
+            clearLines();
+            if (mSelectedEventID != null) {
+                drawRelationLines();
+            }
+        }
+        if (SettingsActivity.mapOptionsHaveChanged(data)){
+            mMap.setMapType(Model.get().getCurrentMapType());
         }
     }
 }

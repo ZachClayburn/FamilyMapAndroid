@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="70dp"
     android:id="@+id/menu_fragment_layout"
+    android:background="@color/colorBackground"
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="4dp"
     tools:context="clayburn.familymap.app.ui.menuItems.SpinnerSwitchFragment">
 
     <LinearLayout

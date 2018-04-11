@@ -2,8 +2,8 @@ package clayburn.familymap.app.ui.menuItems;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
@@ -26,6 +26,8 @@ public class MenuFragment extends Fragment {
     protected AppCompatTextView mOptionName;
     protected TextView mOptionDetail;
     protected ConstraintLayout mLayout;
+
+    protected String mSource;
 
     /**
      * The interface for actions that will be performed on click within the fragment.
@@ -113,10 +115,20 @@ public class MenuFragment extends Fragment {
     public void setClickAction(OnClickAction action){
         mLayout.setOnClickListener(v ->{
             action.clickAction();
-            optionChanged();
+            optionChanged(mSource);
         });
     }
 
+    /**
+     * Set the source string that will be passed back to the containing activity that implements
+     * {@link OnFragmentInteractionListener} through
+     * {@link OnFragmentInteractionListener#onOptionChanged(String)}
+     * @param source The source string that will allow the parent activity or Fragment to
+     *               distinguish between different interactions
+     */
+    public void setSource(String source) {
+        mSource = source;
+    }
 
     @Override
     public void onDetach() {
@@ -124,8 +136,8 @@ public class MenuFragment extends Fragment {
         mListener = null;
     }
 
-    protected void optionChanged(){
-        mListener.onOptionChanged();
+    protected void optionChanged(String source){
+        mListener.onOptionChanged(source);
     }
 
     /**
@@ -139,7 +151,7 @@ public class MenuFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onOptionChanged();
+        void onOptionChanged(@Nullable String source);
     }
 
 }
