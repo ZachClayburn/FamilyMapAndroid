@@ -164,6 +164,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap.setOnMapClickListener(latLng -> {
             if (!mInfoLayoutHidden){
                 lowerInfoLayout();
+                mSelectedEventID = null;
             }
             clearLines();
         });
@@ -319,7 +320,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         switch (requestCode){
             case SETTINGS_ACTIVITY_REQUEST_CODE:{
                 if (SettingsActivity.checkDataHasChanged(data)){
-                    Toast.makeText(requireContext(),"Settings have changed", Toast.LENGTH_SHORT).show();
+                    clearLines();
+                    if (mSelectedEventID != null) {
+                        drawRelationLines();
+                    }
                 }
             }
         }

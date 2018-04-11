@@ -37,4 +37,8 @@ public class SwitchFragment extends MenuFragment {
             optionChanged();
         }));
     }
+
+    public void setOptionSwitchState(boolean isSwitched){
+        mOptionSwitch.setChecked(isSwitched);
+    }
 }

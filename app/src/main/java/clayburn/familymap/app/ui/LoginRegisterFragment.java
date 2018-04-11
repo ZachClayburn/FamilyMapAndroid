@@ -21,6 +21,7 @@ import clayburn.familymap.ServiceResponses.LoginResponse;
 import clayburn.familymap.ServiceResponses.RegisterResponse;
 import clayburn.familymap.ServiceResponses.ServiceResponse;
 import clayburn.familymap.app.R;
+import clayburn.familymap.app.Utils;
 import clayburn.familymap.app.network.DataFetchTask;
 import clayburn.familymap.app.network.LogInTask;
 import clayburn.familymap.app.network.LoginRegisterParams;
@@ -142,54 +143,47 @@ public class LoginRegisterFragment
         mEmailEditText.addTextChangedListener(new TextFieldListener(mEditTextNames.email));
 
         mGenderRadioGroup = view.findViewById(R.id.gender_radio_group);
-        mGenderRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                mGender = (checkedId == R.id.male_radio_button) ? "m" : "f";
-                updateRegisterButtonState();
-            }
+        mGenderRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            mGender = (checkedId == R.id.male_radio_button) ? "m" : "f";
+            updateRegisterButtonState();
         });
 
         mRegisterButton = view.findViewById(R.id.register_button);
         mRegisterButton.setEnabled(false);
-        mRegisterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mIsWorking = true;
-                updateLoginButtonState();
-                updateRegisterButtonState();
-                LoginRegisterParams params = new LoginRegisterParams(
-                        mServerHost,
-                        mServerPort,
-                        mUserName,
-                        mPassword,
-                        mFirstName,
-                        mLastName,
-                        mEmail,
-                        mGender
-                );
-                new RegisterTask(LoginRegisterFragment.this).execute(params);
-                //TODO Add a working indicator
-            }
+        mRegisterButton.setOnClickListener(v -> {
+            mIsWorking = true;
+            Utils.closeKeyboard(requireActivity(),mServerHostEditText.getWindowToken());
+            updateLoginButtonState();
+            updateRegisterButtonState();
+            LoginRegisterParams params = new LoginRegisterParams(
+                    mServerHost,
+                    mServerPort,
+                    mUserName,
+                    mPassword,
+                    mFirstName,
+                    mLastName,
+                    mEmail,
+                    mGender
+            );
+            new RegisterTask(LoginRegisterFragment.this).execute(params);
+            //TODO Add a working indicator
         });
 
         mLogInButton = view.findViewById(R.id.log_in_button);
         mLogInButton.setEnabled(false);
-        mLogInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mIsWorking = true;
-                updateLoginButtonState();
-                updateRegisterButtonState();
-                LoginRegisterParams params = new LoginRegisterParams(
-                        mServerHost,
-                        mServerPort,
-                        mUserName,
-                        mPassword
-                );
-                new LogInTask(LoginRegisterFragment.this).execute(params);
-                //TODO Add a working indicator
-            }
+        mLogInButton.setOnClickListener(v -> {
+            mIsWorking = true;
+            Utils.closeKeyboard(requireActivity(),mServerHostEditText.getWindowToken());
+            updateLoginButtonState();
+            updateRegisterButtonState();
+            LoginRegisterParams params = new LoginRegisterParams(
+                    mServerHost,
+                    mServerPort,
+                    mUserName,
+                    mPassword
+            );
+            new LogInTask(LoginRegisterFragment.this).execute(params);
+            //TODO Add a working indicator
         });
 
 

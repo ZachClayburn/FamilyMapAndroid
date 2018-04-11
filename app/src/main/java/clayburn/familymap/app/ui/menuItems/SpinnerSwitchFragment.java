@@ -57,4 +57,8 @@ public class SpinnerSwitchFragment extends SpinnerFragment {
             optionChanged();
         });
     }
+
+    public void setOptionSwitchState(boolean isSwitched){
+        mOptionSwitch.setChecked(isSwitched);
+    }
 }

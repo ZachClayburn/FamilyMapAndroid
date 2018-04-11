@@ -16,18 +16,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 
+import static clayburn.familymap.model.Model.LineName.*;
+
 /**
  * The global data holder for the entire app.
  */
 public class Model {
 
     private static final String TAG = "MODEL";
-
-    public enum LineName {
-        lifeStoryLines,
-        familyTreeLines,
-        spouseLines
-    }
 
     public static final String LIFE_STORY_LINES = "Life Story Lines";
     public static final String FAMILY_TREE_LINES = "Family Trees Lines";
@@ -40,7 +36,6 @@ public class Model {
     private static Model sModel;
 
     private Model(){
-
         mPersons = new HashMap<>();
         mEvents = new HashMap<>();
         mPersonEvents = new HashMap<>();
@@ -63,14 +58,6 @@ public class Model {
     private Map<String, Set<Event>> mPersonEvents;
     private Set<String> mEventTypes;
     private Map<String,Float> mEventColors;
-    private final int[] colors = {
-            0xFFB71C1C,//Red
-            0xFF2E7D32,//Green
-            0xFF0D47A1,//Blue
-            0xFFFFCA28 //Yellow
-    };
-    private Map<LineName, Boolean> mDrawLines;
-    private Map<LineName, Integer> mLineColorInds;
 
     private String mAuthToken;
     private String mUserPersonID;
@@ -85,15 +72,15 @@ public class Model {
         //TODO Finish this method
 
         //Set up default map options
-        mDrawLines = new HashMap<>();
+        mLineDrawn = new HashMap<>();
         for (LineName name : LineName.values()) {
-            mDrawLines.put(name, true);
+            mLineDrawn.put(name, true);
         }
 
         mLineColorInds = new HashMap<>();
         mLineColorInds.put(LineName.lifeStoryLines,0);
         mLineColorInds.put(LineName.familyTreeLines,1);
-        mLineColorInds.put(LineName.spouseLines,2);
+        mLineColorInds.put(spouseLines,2);
 
         for (Person person : persons) {
             mPersons.put(person.getPersonID(),person);
@@ -118,6 +105,39 @@ public class Model {
             mEventColors.put(eventType,currentColor);
             currentColor += colorStep;
         }
+    }
+
+    // Line Settings Methods------------------------------------------------------------------------
+
+    private final int[] colors = {
+            0xFFB71C1C,//Red
+            0xFF2E7D32,//Green
+            0xFF0D47A1,//Blue
+            0xFFFFCA28 //Yellow
+    };
+    public enum LineName {
+        lifeStoryLines,
+        familyTreeLines,
+        spouseLines
+    }
+    private Map<LineName, Boolean> mLineDrawn;
+    private Map<LineName, Integer> mLineColorInds;
+
+
+    public int getLineClolorSelection(LineName lineName){
+        return mLineColorInds.get(lineName);
+    }
+
+    public void setLineColorSelection(LineName lineName, int selection){
+        mLineColorInds.replace(lineName,selection);
+    }
+
+    public boolean isLineDrawn(LineName lineName){
+        return mLineDrawn.get(lineName);
+    }
+
+    public void setLineDrawn(LineName lineName, boolean isDrawn){
+        mLineDrawn.replace(lineName,isDrawn);
     }
 
     /**
@@ -200,7 +220,7 @@ public class Model {
     public PolylineOptions getSpouseLine(String eventID){
         Log.d(TAG,"getSpouseLine(String) called");
 
-        if (!mDrawLines.get(LineName.spouseLines)){
+        if (!mLineDrawn.get(spouseLines)){
             return null;
         }
 
@@ -212,7 +232,7 @@ public class Model {
 
         Event event = mEvents.get(eventID);
         LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
-        int lineColor = colors[mLineColorInds.get(LineName.spouseLines)];
+        int lineColor = colors[mLineColorInds.get(spouseLines)];
 
         PolylineOptions options = new PolylineOptions();
         options.add(position);
@@ -229,7 +249,7 @@ public class Model {
     public PolylineOptions[] getFamilyHistoryLines(String eventID){
         Log.d(TAG,"getFamilyHistoryLines(String) called");
 
-        if (!mDrawLines.get(LineName.familyTreeLines)){
+        if (!mLineDrawn.get(familyTreeLines)){
             return null;
         }
 
@@ -250,7 +270,7 @@ public class Model {
         PolylineOptions options;
         Person person = mPersons.get(personID);
         LatLng ancestorPosition;
-        int lineColor = colors[mLineColorInds.get(LineName.familyTreeLines)];
+        int lineColor = colors[mLineColorInds.get(familyTreeLines)];
 
         //Paternal Side
         if (person.getFather() != null) {
@@ -296,12 +316,12 @@ public class Model {
     public PolylineOptions getLifeStoryLine(String eventID){
         Log.d(TAG,"getLifeStoryLine(String) called");
 
-        if (!mDrawLines.get(LineName.lifeStoryLines)){
+        if (!mLineDrawn.get(lifeStoryLines)){
             return null;
         }
 
         String personID = mEvents.get(eventID).getPersonID();
-        int lineColor = colors[mLineColorInds.get(LineName.lifeStoryLines)];
+        int lineColor = colors[mLineColorInds.get(lifeStoryLines)];
 
         PolylineOptions options = new PolylineOptions();
         options.color(lineColor);

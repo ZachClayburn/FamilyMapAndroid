@@ -12,6 +12,9 @@ import clayburn.familymap.app.R;
 import clayburn.familymap.app.ui.menuItems.MenuFragment;
 import clayburn.familymap.app.ui.menuItems.SpinnerFragment;
 import clayburn.familymap.app.ui.menuItems.SpinnerSwitchFragment;
+import clayburn.familymap.model.Model;
+
+import static clayburn.familymap.model.Model.LineName.*;
 
 public class SettingsActivity extends AppCompatActivity implements MenuFragment.OnFragmentInteractionListener{
 
@@ -108,58 +111,75 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         SpinnerSwitchFragment ssFragment;
         SpinnerFragment sFragment;
         MenuFragment mFragment;
+        Model model = Model.get();
 
         //Life story options
         ssFragment = (SpinnerSwitchFragment) mLifeStoryFragment;
         ssFragment.setOptionName(R.string.option_name_life_story);
         ssFragment.setOptionDetail(R.string.option_detail_life_story);
-        ssFragment.setOptionSwitchListener((buttonView, isChecked) -> {
-            Boolean IsChecked = isChecked;
-            Toast.makeText(SettingsActivity.this,IsChecked.toString(),Toast.LENGTH_SHORT).show();
-        });
-        ssFragment.setOptionSpinnerList(R.array.line_color_names, 0);
 
+        ssFragment.setOptionSwitchState(model.isLineDrawn(lifeStoryLines));
+        ssFragment.setOptionSwitchListener((buttonView, isChecked) ->
+                model.setLineDrawn(lifeStoryLines,isChecked)
+        );
+
+        ssFragment.setOptionSpinnerList(
+                R.array.line_color_names,
+                model.getLineClolorSelection(lifeStoryLines)
+        );
         ssFragment.setOptionSpinnerAction(position ->
-                Toast.makeText(SettingsActivity.this,"Life story spinner",Toast.LENGTH_SHORT).show());
+                model.setLineColorSelection(lifeStoryLines,position)
+        );
 
         //Family tree options
         ssFragment = (SpinnerSwitchFragment) mFamilyTreeFragment;
         ssFragment.setOptionName(R.string.option_name_family_tree);
         ssFragment.setOptionDetail(R.string.option_detail_family_tree);
-        ssFragment.setOptionSwitchListener((buttonView, isChecked) -> {
-            Boolean IsChecked = isChecked;
-            Toast.makeText(SettingsActivity.this,IsChecked.toString(),Toast.LENGTH_SHORT).show();
-        });
-        ssFragment.setOptionSpinnerList(R.array.line_color_names, 0);
 
+        ssFragment.setOptionSwitchState(model.isLineDrawn(familyTreeLines));
+        ssFragment.setOptionSwitchListener((buttonView, isChecked) ->
+                model.setLineDrawn(familyTreeLines,isChecked)
+        );
+
+        ssFragment.setOptionSpinnerList(
+                R.array.line_color_names,
+                model.getLineClolorSelection(familyTreeLines)
+        );
         ssFragment.setOptionSpinnerAction(position ->
-                Toast.makeText(SettingsActivity.this,"Family tree spinner",Toast.LENGTH_SHORT).show());
+                model.setLineColorSelection(familyTreeLines,position)
+        );
 
         //Spouse options
         ssFragment = (SpinnerSwitchFragment) mSpouseFragment;
         ssFragment.setOptionName(R.string.option_name_spouse);
         ssFragment.setOptionDetail(R.string.option_detail_spouse);
-        ssFragment.setOptionSwitchListener((buttonView, isChecked) -> {
-            Boolean IsChecked = isChecked;
-            Toast.makeText(SettingsActivity.this,IsChecked.toString(),Toast.LENGTH_SHORT).show();
-        });
-        ssFragment.setOptionSpinnerList(R.array.line_color_names, 0);
 
+        ssFragment.setOptionSwitchState(model.isLineDrawn(spouseLines));
+        ssFragment.setOptionSwitchListener((buttonView, isChecked) ->
+                model.setLineDrawn(spouseLines,isChecked)
+        );
+
+        ssFragment.setOptionSpinnerList(
+                R.array.line_color_names,
+                model.getLineClolorSelection(spouseLines)
+        );
         ssFragment.setOptionSpinnerAction(position ->
-                Toast.makeText(SettingsActivity.this,"Spouse spinner",Toast.LENGTH_SHORT).show());
+                model.setLineColorSelection(spouseLines, position)
+        );
 
         //Map Type options
         sFragment = (SpinnerFragment) mMapTypeFragment;
         sFragment.setOptionName(R.string.option_name_map_type);
         sFragment.setOptionDetail(R.string.option_detail_map_type);
-        sFragment.setOptionSpinnerList(R.array.map_types, 0);
 
+        sFragment.setOptionSpinnerList(R.array.map_types, 0);
         sFragment.setOptionSpinnerAction(position ->
                 Toast.makeText(SettingsActivity.this,"map type spinner",Toast.LENGTH_SHORT).show());
 
         //Re-sync options
         mFragment = (MenuFragment) mSyncDataFragment;
         mFragment.setOptionName(R.string.option_name_sync_data);
+
         mFragment.setOptionDetail(R.string.option_detail_sync_data);
         mFragment.setClickAction(() ->
                 Toast.makeText(SettingsActivity.this,"Sync clicked",Toast.LENGTH_SHORT).show());
@@ -167,6 +187,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         //Log out options
         mFragment = (MenuFragment) mLogOutFragment;
         mFragment.setOptionName(R.string.option_name_log_out);
+
         mFragment.setOptionDetail(R.string.option_detail_log_out);
         mFragment.setClickAction(() ->
                 Toast.makeText(SettingsActivity.this,"Log out clicked",Toast.LENGTH_SHORT).show());
