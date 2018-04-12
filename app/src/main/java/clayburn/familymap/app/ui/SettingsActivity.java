@@ -140,8 +140,6 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        //TODO Properly initialize these fields
-        //TODO Implement methods on Model to save all of these settings
         SpinnerSwitchFragment ssFragment;
         SpinnerFragment sFragment;
         MenuFragment mFragment;
