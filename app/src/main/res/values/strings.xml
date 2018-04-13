@@ -54,5 +54,7 @@
 
     <!-- FilterActivity Strings -->
     <string name="title_activity_Strings">Filter</string>
+    <string name="filter_name">%1$s Events</string>
+    <string name="filter_details">Hide all %1$s Events</string>
 
 </resources>

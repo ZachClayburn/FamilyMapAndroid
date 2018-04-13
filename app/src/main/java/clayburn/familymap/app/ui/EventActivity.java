@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 import clayburn.familymap.app.R;
 
-public class EventActivity extends AppCompatActivity {
+public class EventActivity extends AppCompatActivity implements MapFragment.OnFragmentInteractionListener {
 
     private static final String EVENT_ID = "clayburn.familymap.app.ui.event_id";
 

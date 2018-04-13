@@ -43,6 +43,7 @@ public class Model {
         mEventTypes = new HashSet<>();
         initLineSettings();
         initMapSettings();
+        initFilterSettings();
     }
 
     /**
@@ -59,7 +60,6 @@ public class Model {
     private Map<String, Person> mPersons;
     private Map<String, Event> mEvents;
     private Map<String, Set<Event>> mPersonEvents;
-    private Set<String> mEventTypes;
     private Map<String,Float> mEventColors;
 
     private String mAuthToken;
@@ -95,6 +95,7 @@ public class Model {
         mEventColors = new HashMap<>();
         for(String eventType : mEventTypes){
             mEventColors.put(eventType,currentColor);
+            mEventFilters.put(eventType,true);
             currentColor += colorStep;
         }
     }
@@ -144,7 +145,6 @@ public class Model {
         mLineDrawn.replace(lineName,isDrawn);
     }
 
-
     //Map Style Setting Methods---------------------------------------------------------------------
 
     private final int[] MAP_TYPES = {
@@ -170,6 +170,34 @@ public class Model {
     public int getCurrentMapTypeIndex(){
         return mMapTypeSelection;
     }
+
+    //Filter Setting methods------------------------------------------------------------------------
+
+    private Set<String> mEventTypes;
+    private Map<String, Boolean> mEventFilters;
+
+    private void initFilterSettings(){
+        mEventTypes = new HashSet<>();
+        mEventFilters = new HashMap<>();
+    }
+
+    public Set<String> getEventTypes() {
+        return mEventTypes;
+    }
+
+    public void setEventFilter(String eventType, Boolean isDrawn){
+        mEventFilters.replace(eventType,isDrawn);
+    }
+
+    public boolean isEventDrawn(String eventType){
+        return mEventFilters.get(eventType) != null && mEventFilters.get(eventType);
+    }
+    //TODO Actually use this info to filter events
+    //TODO Add Mother's side filter
+    //TODO Add Father's side filter
+    //TODO Add female events filter
+    //TODO Add male events filter
+
 
     //Unorganized Mess------------------------------------------------------------------------------
     //TODO Fix this
@@ -441,10 +469,6 @@ public class Model {
         }
 
         return listItems;
-    }
-
-    public Set<String> getEventTypes() {
-        return mEventTypes;
     }
 
     public Map<String, Float> getEventColors() {

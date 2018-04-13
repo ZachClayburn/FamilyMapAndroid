@@ -48,7 +48,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final String SELECTED_EVENT = "SELECTED_EVENT";
     private static final String TAG = "MAP_FRAGMENT";
     private static final int PERSON_ACTIVITY_REQUEST_CODE = 0;
-    private static final int SETTINGS_ACTIVITY_REQUEST_CODE = 0;
+    private static final int SETTINGS_ACTIVITY_REQUEST_CODE = 1;
+    private static final int FILTER_ACTIVITY_REQUEST_CODE = 2;
 
     private String mSelectedEventID;
     private boolean mInfoLayoutHidden;
@@ -288,14 +289,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.map_activity_filter:{
+                Intent intent = FilterActivity.newIntent(requireContext());
+                startActivityForResult(intent,FILTER_ACTIVITY_REQUEST_CODE);
                 return true;
             }
             case R.id.map_activity_settings:{
                 Intent intent = SettingsActivity.newIntent(requireContext());
                 startActivityForResult(intent,SETTINGS_ACTIVITY_REQUEST_CODE);
-                if (Model.get().getCurrentMapType() != mMap.getMapType()){
-                    mMap.setMapType(Model.get().getCurrentMapType());
-                }
                 return true;
             }
             case R.id.map_activity_search:{
