@@ -252,13 +252,16 @@ public class Model {
 
     /**
      * Return the name of the Person who owns the given event
-     * @param eventID The eventID of the Event you are checking
+     * @param personID The personID of the Event you are checking
      * @return The first and last name of the person who the event belongs to formatted as a string
      */
-    public String getEventPersonName(String eventID){
-        Event event = mEvents.get(eventID);
-        Person person = mPersons.get(event.getPersonID());
+    public String getPersonName(String personID){
+        Person person = mPersons.get(personID);
         return person.getFirstName() + " " + person.getLastName();
+    }
+
+    public String getEventPersonID(String eventID){
+        return mEvents.get(eventID).getPersonID();
     }
 
     /**
@@ -469,6 +472,10 @@ public class Model {
         }
 
         return listItems;
+    }
+
+    public boolean isMale(String personID){
+        return mPersons.get(personID).getGender().equals("m");
     }
 
     public Map<String, Float> getEventColors() {

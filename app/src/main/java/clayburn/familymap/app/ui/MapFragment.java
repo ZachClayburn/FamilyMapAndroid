@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -60,6 +61,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private ConstraintLayout mInfoLayout;
     private TextView mEventDetailPersonName;
     private TextView mEventDetailInformation;
+    private ImageView mEventDetailGenderIcon;
 
     public MapFragment() {
         // Required empty public constructor
@@ -118,6 +120,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         mEventDetailPersonName = v.findViewById(R.id.event_detail_person_name);
         mEventDetailInformation = v.findViewById(R.id.event_detail_information);
+        mEventDetailGenderIcon = v.findViewById(R.id.event_detail_person_icon);
 
         mInfoLayout = v.findViewById(R.id.info_layout);
         mInfoLayout.setOnClickListener(v1 -> {
@@ -196,8 +199,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LatLng position = marker.getPosition();
         mMap.animateCamera(CameraUpdateFactory.newLatLng(position));
 
-        mEventDetailPersonName.setText(Model.get().getEventPersonName(mSelectedEventID));
+        String personID = Model.get().getEventPersonID(mSelectedEventID);
+
+        mEventDetailPersonName.setText(Model.get().getPersonName(personID));
         mEventDetailInformation.setText(Model.get().getEventInfo(mSelectedEventID));
+        mEventDetailGenderIcon.setImageResource(
+                Model.get().isMale(personID) ?
+                        R.drawable.ic_android_male : R.drawable.ic_android_female
+        );
 
         drawRelationLines();
 

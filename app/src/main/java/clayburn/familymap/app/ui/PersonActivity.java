@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ public class PersonActivity extends AppCompatActivity {
 
     private static final String PERSON_ID = "clayburn.familymap.app.ui.person_id";
 
+    private AppCompatTextView mPersonName;
+    private ImageView mGenderIcon;
     private RecyclerView mRecyclerView;
     private PersonActivityAdapter mAdapter;
 
@@ -43,6 +47,16 @@ public class PersonActivity extends AppCompatActivity {
         if (intent.hasExtra(PERSON_ID)) {
             mPersonID = intent.getStringExtra(PERSON_ID);
         }
+
+        mPersonName = findViewById(R.id.person_name);
+        mPersonName.setText(
+                Model.get().getPersonFullName(mPersonID)
+        );
+
+        mGenderIcon = findViewById(R.id.gender_icon);
+        int iconID = Model.get().isMale(mPersonID) ?
+                R.drawable.ic_android_male : R.drawable.ic_android_female;
+        mGenderIcon.setImageResource(iconID);
 
         mRecyclerView = findViewById(R.id.person_activity_recycler_view);
 

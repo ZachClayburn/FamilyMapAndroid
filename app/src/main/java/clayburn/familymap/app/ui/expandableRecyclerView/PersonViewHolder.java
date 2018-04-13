@@ -43,8 +43,10 @@ public class PersonViewHolder extends ChildViewHolder {
 
         mPersonName.setText(Model.get().getPersonFullName(mPersonID));
 
-        //TODO Set this pragmatically to male or female
-        mGenderIcon.setImageResource(R.drawable.ic_android_placeholder);
+        mGenderIcon.setImageResource(
+                Model.get().isMale(mPersonID) ?
+                        R.drawable.ic_android_male : R.drawable.ic_android_female
+        );
 
         switch (item.getRelation()){
             case ListPerson.CHILD:{
