@@ -12,6 +12,7 @@ public class ListPerson implements ExpandableListItem {
     public static final int PARENT = 0;
     public static final int SPOUSE = 1;
     public static final int CHILD = 2;
+    public static final int NO_RELATION = 3;
 
     private static final String TAG = "lIST_PERSON";
 
@@ -24,7 +25,7 @@ public class ListPerson implements ExpandableListItem {
      * @param relation The relationship the Person has to the Person who owns the given list
      */
     public ListPerson(String personID, int relation) {
-        if(relation == PARENT || relation == SPOUSE || relation == CHILD) {
+        if(relation == PARENT || relation == SPOUSE || relation == CHILD || relation == NO_RELATION) {
             mPersonID = personID;
             mRelation = relation;
         } else {

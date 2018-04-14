@@ -311,11 +311,6 @@ public class LoginRegisterFragment
 
     @Override
     public void onDataFetchSuccess() {
-        Toast.makeText(
-                getContext(),
-                Model.get().getUsersRealName(),
-                Toast.LENGTH_LONG
-        ).show();
         mLoginRegisterContext.onLoginCompleted();
     }
 

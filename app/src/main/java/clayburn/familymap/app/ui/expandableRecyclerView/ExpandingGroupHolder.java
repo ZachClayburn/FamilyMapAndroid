@@ -7,21 +7,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import clayburn.familymap.app.R;
-import clayburn.familymap.model.PersonActivityGroup;
+import clayburn.familymap.model.ExpandingGroup;
 
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
 import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
-public class PersonActivityGroupHolder extends GroupViewHolder {
+public class ExpandingGroupHolder extends GroupViewHolder {
 
     private static final String TAG = "PERSON_ACT_GROUP_HOLDER";
 
     private TextView mGroupText;
     private ImageView mDropDownArrow;
 
-    public PersonActivityGroupHolder(View itemView) {
+    public ExpandingGroupHolder(View itemView) {
         super(itemView);
         mGroupText = itemView.findViewById(R.id.expandable_group_text);
         mDropDownArrow = itemView.findViewById(R.id.drop_down_arrow);
@@ -30,14 +30,17 @@ public class PersonActivityGroupHolder extends GroupViewHolder {
     public void onBind(ExpandableGroup group){
 
         switch (group.getTitle()){
-            case PersonActivityGroup.EVENT_GROUP_TITLE:{
+            case ExpandingGroup.EVENT_GROUP_TITLE:{
                 mGroupText.setText(R.string.events_group_title);
             }break;
-            case PersonActivityGroup.FAMILY_GROUP_TITLE:{
+            case ExpandingGroup.FAMILY_GROUP_TITLE:{
                 mGroupText.setText(R.string.family_group_title);
             }break;
+            case ExpandingGroup.PERSON_GROUP_TITLE:{
+                mGroupText.setText(R.string.person_group_title);
+            }break;
             default:{
-                String er = "Unrecognized group category in PersonActivityGroupHolder.onBind";
+                String er = "Unrecognized group category in ExpandingGroupHolder.onBind";
                 Log.e(TAG,er);
             }
         }

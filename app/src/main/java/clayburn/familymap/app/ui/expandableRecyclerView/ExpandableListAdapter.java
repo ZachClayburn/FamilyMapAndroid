@@ -17,17 +17,17 @@ import static android.view.LayoutInflater.from;
 
 import clayburn.familymap.app.R;
 import clayburn.familymap.model.ExpandableListItem;
-import clayburn.familymap.model.PersonActivityGroup;
+import clayburn.familymap.model.ExpandingGroup;
 
-public class PersonActivityAdapter
-        extends MultiTypeExpandableRecyclerViewAdapter<PersonActivityGroupHolder,ChildViewHolder> {
+public class ExpandableListAdapter
+        extends MultiTypeExpandableRecyclerViewAdapter<ExpandingGroupHolder,ChildViewHolder> {
 
     public static final int PERSON_VIEW_TYPE = 3;
     public static final int EVENT_VIEW_TYPE = 4;
 
     private static final String TAG = "PERSON_ACTIVITY_ADAPTER";
 
-    public PersonActivityAdapter(List<? extends ExpandableGroup> groups) {
+    public ExpandableListAdapter(List<? extends ExpandableGroup> groups) {
         super(groups);
     }
 
@@ -36,18 +36,18 @@ public class PersonActivityAdapter
      * the list item created is a group
      *
      * @param parent   the {@link ViewGroup} in the list for which a
-     * {@link PersonActivityGroupHolder}  is being created
+     * {@link ExpandingGroupHolder}  is being created
      * @param viewType an int returned by {@link ExpandableRecyclerViewAdapter#getItemViewType(int)}
-     * @return A {@link PersonActivityGroupHolder} corresponding to the group list item with the
+     * @return A {@link ExpandingGroupHolder} corresponding to the group list item with the
      * {@code ViewGroup} parent
      */
     @Override
-    public PersonActivityGroupHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG,"PersonActivityGroupHolder.onCreateGroupViewHolder called");
+    public ExpandingGroupHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
+        Log.d(TAG,"ExpandingGroupHolder.onCreateGroupViewHolder called");
         View view = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.expandable_group_view,parent,false);
-        return new PersonActivityGroupHolder(view);
+        return new ExpandingGroupHolder(view);
     }
 
     /**
@@ -62,7 +62,7 @@ public class PersonActivityAdapter
     @Override
     public ChildViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
 
-        Log.d(TAG,"PersonActivityGroupHolder.onCreateChildViewHolder called");
+        Log.d(TAG,"ExpandingGroupHolder.onCreateChildViewHolder called");
         LayoutInflater inflater = from(parent.getContext());
         View view;
 
@@ -94,10 +94,10 @@ public class PersonActivityAdapter
     @Override
     public void onBindChildViewHolder(ChildViewHolder holder, int flatPosition,
                                       ExpandableGroup group, int childIndex) {
-        Log.d(TAG,"PersonActivityGroupHolder.onBindChildViewHolder called");
+        Log.d(TAG,"ExpandingGroupHolder.onBindChildViewHolder called");
         int viewType = getItemViewType(flatPosition);
 
-        ExpandableListItem item = ((PersonActivityGroup) group).getItems().get(childIndex);
+        ExpandableListItem item = ((ExpandingGroup) group).getItems().get(childIndex);
 
         switch (viewType){
             case PERSON_VIEW_TYPE:{
@@ -113,7 +113,7 @@ public class PersonActivityAdapter
      * Called from onBindViewHolder(RecyclerView.ViewHolder, int) when the list item bound to is a
      * group
      * <p>
-     * Bind data to the {@link PersonActivityGroupHolder} here.
+     * Bind data to the {@link ExpandingGroupHolder} here.
      *
      * @param holder       The {@code GVH} to bind data to
      * @param flatPosition the flat position (raw index) in the list at which to bind the group
@@ -121,9 +121,9 @@ public class PersonActivityAdapter
      * ChildViewHolder}
      */
     @Override
-    public void onBindGroupViewHolder(PersonActivityGroupHolder holder,
+    public void onBindGroupViewHolder(ExpandingGroupHolder holder,
                                       int flatPosition, ExpandableGroup group) {
-        Log.d(TAG,"PersonActivityGroupHolder.onBindGroupViewHolder called");
+        Log.d(TAG,"ExpandingGroupHolder.onBindGroupViewHolder called");
         holder.onBind(group);
     }
 
@@ -146,14 +146,16 @@ public class PersonActivityAdapter
      */
     @Override
     public int getChildViewType(int position, ExpandableGroup group, int childIndex) {
-        Log.d(TAG,"PersonActivityGroupHolder.getChildViewType called");
+        Log.d(TAG,"ExpandingGroupHolder.getChildViewType called");
         switch (group.getTitle()){
-            case PersonActivityGroup.FAMILY_GROUP_TITLE:
+            case ExpandingGroup.FAMILY_GROUP_TITLE:
                 return PERSON_VIEW_TYPE;
-            case PersonActivityGroup.EVENT_GROUP_TITLE:
+            case ExpandingGroup.EVENT_GROUP_TITLE:
                 return EVENT_VIEW_TYPE;
+            case ExpandingGroup.PERSON_GROUP_TITLE:
+                return PERSON_VIEW_TYPE;
             default:
-                String er = "Illegal type in PersonActivityAdapter.getChildViewType";
+                String er = "Illegal type in ExpandableListAdapter.getChildViewType";
                 Log.e(TAG,er);
                 throw new RuntimeException(er);
 
@@ -167,7 +169,7 @@ public class PersonActivityAdapter
      */
     @Override
     public boolean isChild(int viewType) {
-        Log.d(TAG,"PersonActivityGroupHolder.isChild called");
+        Log.d(TAG,"ExpandingGroupHolder.isChild called");
         return viewType == EVENT_VIEW_TYPE || viewType == PERSON_VIEW_TYPE;
     }
 }

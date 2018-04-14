@@ -10,17 +10,18 @@ import java.util.List;
  * Created by zach on 4/5/18.
  */
 
-public class PersonActivityGroup extends ExpandableGroup<ExpandableListItem> {
+public class ExpandingGroup extends ExpandableGroup<ExpandableListItem> {
 
 
     public static final String FAMILY_GROUP_TITLE = "family";
     public static final String EVENT_GROUP_TITLE = "event";
+    public static final String PERSON_GROUP_TITLE = "person";
 
-    public PersonActivityGroup(String title, List<ExpandableListItem> items) {
+    public ExpandingGroup(String title, List<ExpandableListItem> items) {
         super(title, items);
     }
 
-    protected PersonActivityGroup(Parcel in) {
+    protected ExpandingGroup(Parcel in) {
         super(in);
     }
 }

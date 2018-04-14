@@ -41,7 +41,7 @@ public class PersonViewHolder extends ChildViewHolder {
         ListPerson item = (ListPerson) expandableListItem;
         mPersonID = item.getPersonID();
 
-        mPersonName.setText(Model.get().getPersonFullName(mPersonID));
+        mPersonName.setText(Model.get().getPersonName(mPersonID));
 
         mGenderIcon.setImageResource(
                 Model.get().isMale(mPersonID) ?

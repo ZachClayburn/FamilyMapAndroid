@@ -135,11 +135,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         mInfoLayout = v.findViewById(R.id.info_layout);
         mInfoLayout.setOnClickListener(v1 -> {
-            String personID = Model
-                    .get()
-                    .getEvents()
-                    .get(mSelectedEventID)
-                    .getPersonID();
+            String personID = Model.get().getEventPersonID(mSelectedEventID);
             startActivity(
                     PersonActivity.newIntent(getContext(),personID)
             );
@@ -336,6 +332,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 return true;
             }
             case R.id.map_activity_search:{
+                Intent intent = SearchActivity.newIntent(requireContext());
+                startActivity(intent);
                 return true;
             }
             default:

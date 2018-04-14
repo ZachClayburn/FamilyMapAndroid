@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clayburn.familymap.app.R;
+import clayburn.familymap.app.ui.expandableRecyclerView.ExpandableListAdapter;
 import clayburn.familymap.model.ExpandableListItem;
-import clayburn.familymap.app.ui.expandableRecyclerView.PersonActivityAdapter;
 import clayburn.familymap.model.Model;
-import clayburn.familymap.model.PersonActivityGroup;
+import clayburn.familymap.model.ExpandingGroup;
 
 public class PersonActivity extends AppCompatActivity {
 
@@ -25,7 +25,7 @@ public class PersonActivity extends AppCompatActivity {
     private AppCompatTextView mPersonName;
     private ImageView mGenderIcon;
     private RecyclerView mRecyclerView;
-    private PersonActivityAdapter mAdapter;
+    private ExpandableListAdapter mAdapter;
 
     private String mPersonID;
 
@@ -50,7 +50,7 @@ public class PersonActivity extends AppCompatActivity {
 
         mPersonName = findViewById(R.id.person_name);
         mPersonName.setText(
-                Model.get().getPersonFullName(mPersonID)
+                Model.get().getPersonName(mPersonID)
         );
 
         mGenderIcon = findViewById(R.id.gender_icon);
@@ -61,7 +61,7 @@ public class PersonActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.person_activity_recycler_view);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mAdapter = new PersonActivityAdapter(prepareListContents());
+        mAdapter = new ExpandableListAdapter(prepareListContents());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -99,18 +99,18 @@ public class PersonActivity extends AppCompatActivity {
         mPersonID = savedInstanceState.getString(PERSON_ID);
     }
 
-    private List<PersonActivityGroup> prepareListContents(){
-        List<PersonActivityGroup> list = new ArrayList<>();
+    private List<ExpandingGroup> prepareListContents(){
+        List<ExpandingGroup> list = new ArrayList<>();
 
         List<ExpandableListItem> contentList;
-        PersonActivityGroup group;
+        ExpandingGroup group;
 
         contentList = Model.get().getEventList(mPersonID);
-        group = new PersonActivityGroup(PersonActivityGroup.EVENT_GROUP_TITLE,contentList);
+        group = new ExpandingGroup(ExpandingGroup.EVENT_GROUP_TITLE,contentList);
         list.add(group);
 
         contentList = Model.get().getFamilyList(mPersonID);
-        group = new PersonActivityGroup(PersonActivityGroup.FAMILY_GROUP_TITLE,contentList);
+        group = new ExpandingGroup(ExpandingGroup.FAMILY_GROUP_TITLE,contentList);
         list.add(group);
 
         return list;

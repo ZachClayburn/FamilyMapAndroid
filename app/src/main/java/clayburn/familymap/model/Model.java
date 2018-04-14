@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static clayburn.familymap.model.Model.LineName.*;
 
@@ -350,76 +351,7 @@ public class Model {
         return null;
     }
 
-
-
-    //Unorganized Mess------------------------------------------------------------------------------
-    //Low Priority Fix this
-
-    /**
-     * Get the real name of the logged in user. Retrieves the first and last name of the currently
-     * logged in user from the data retried from the server and concatanates them into a string
-     * @return A string of the format [firstName lastName] of the Person object representing the
-     * currently logged in user
-     */
-    public String getUsersRealName(){
-        return getPersonFullName(mUserPersonID);
-    }
-
-    @NonNull
-    public String getPersonFullName(String personID) {
-        String firstName = mPersons.get(personID).getFirstName();
-        String lastName = mPersons.get(personID).getLastName();
-
-        return firstName + " " + lastName;
-    }
-
-    /**
-     * Get the eventIDs used to acquire more data from the model
-     * @return A set containing all the eventID properties of the Event objects saved in the Model
-     */
-    public Iterable<String> getEventIDIterable(){
-        return mEvents.keySet();
-    }
-
-    /**
-     * Return the name of the Person who owns the given event
-     * @param personID The personID of the Event you are checking
-     * @return The first and last name of the person who the event belongs to formatted as a string
-     */
-    public String getPersonName(String personID){
-        Person person = mPersons.get(personID);
-        return person.getFirstName() + " " + person.getLastName();
-    }
-
-    public String getEventPersonID(String eventID){
-        return mEvents.get(eventID).getPersonID();
-    }
-
-    /**
-     * Get the information of an event formatted as a string
-     * @param eventID The eventID of the Event you want information on
-     * @return A string containing the event type, event location and event year
-     */
-    public String getEventInfo(String eventID){
-        Event event = mEvents.get(eventID);
-        return event.getEventType() +
-                ": " +
-                event.getCity() +
-                ", " +
-                event.getCountry() +
-                " (" +
-                event.getYear() +
-                ")";
-
-    }
-
-    public String getUserPersonID() {
-        return mUserPersonID;
-    }
-
-    public void setUserPersonID(String userPersonID) {
-        mUserPersonID = userPersonID;
-    }
+    //Person Activity Methods-----------------------------------------------------------------------
 
     public List<ExpandableListItem> getEventList(String peronID){
 
@@ -486,6 +418,96 @@ public class Model {
         return listItems;
     }
 
+    //Search Activity Methods-----------------------------------------------------------------------
+
+    public List<ExpandingGroup> search(String searchString){
+
+        List<ExpandingGroup> list = new ArrayList<>();
+
+        List<ExpandableListItem> contentList;
+        ExpandingGroup group;
+
+        contentList = mEvents.values().stream()
+                .filter(event -> eventSearchHelper(event, searchString))
+                .map(event -> new ListEvent(event.getEventID()))
+                .collect(Collectors.toList());
+        group = new ExpandingGroup(ExpandingGroup.EVENT_GROUP_TITLE,contentList);
+        list.add(group);
+
+        contentList = mPersons.values().stream()
+                .filter(person -> personSearchHelper(person,searchString))
+                .map(person -> new ListPerson(person.getPersonID(),ListPerson.NO_RELATION))
+                .collect(Collectors.toList());
+        group = new ExpandingGroup(ExpandingGroup.PERSON_GROUP_TITLE,contentList);
+        list.add(group);
+
+        return list;
+    }
+
+    private boolean eventSearchHelper(Event event, String searchString){
+        String s = searchString.toLowerCase();
+        return !isEventFiltered(event) &&
+        event.getCity().toLowerCase().contains(s) ||
+                event.getCountry().toLowerCase().contains(s) ||
+                event.getYear().toLowerCase().contains(s) ||
+                event.getEventType().toLowerCase().contains(s) ||
+                getPersonName(getEventPersonID(event.getEventID())).toLowerCase().contains(s);
+    }
+
+    private boolean personSearchHelper(Person person, String searchString){
+        String s = searchString.toLowerCase();
+
+        return person.getFirstName().toLowerCase().contains(s) ||
+                person.getLastName().toLowerCase().contains(s);
+    }
+
+    //Unorganized Mess------------------------------------------------------------------------------
+    //Low Priority Fix this
+
+    @NonNull
+    public String getPersonName(String personID) {
+        Person person = mPersons.get(personID);
+        return person.getFirstName() + " " + person.getLastName();
+    }
+
+    /**
+     * Get the eventIDs used to acquire more data from the model
+     * @return A set containing all the eventID properties of the Event objects saved in the Model
+     */
+    public Iterable<String> getEventIDIterable(){
+        return mEvents.keySet();
+    }
+
+    public String getEventPersonID(String eventID){
+        return mEvents.get(eventID).getPersonID();
+    }
+
+    /**
+     * Get the information of an event formatted as a string
+     * @param eventID The eventID of the Event you want information on
+     * @return A string containing the event type, event location and event year
+     */
+    public String getEventInfo(String eventID){
+        Event event = mEvents.get(eventID);
+        return event.getEventType() +
+                ": " +
+                event.getCity() +
+                ", " +
+                event.getCountry() +
+                " (" +
+                event.getYear() +
+                ")";
+
+    }
+
+    public String getUserPersonID() {
+        return mUserPersonID;
+    }
+
+    public void setUserPersonID(String userPersonID) {
+        mUserPersonID = userPersonID;
+    }
+
     public boolean isMale(String personID){
         return mPersons.get(personID).getGender().equals("m");
     }
@@ -496,17 +518,5 @@ public class Model {
 
     public void setAuthToken(String authToken) {
         this.mAuthToken = authToken;
-    }
-
-    public Map<String, Person> getPersons() {
-        return mPersons;
-    }
-
-    public Map<String, Event> getEvents() {
-        return mEvents;
-    }
-
-    public Map<String, Set<Event>> getPersonEvents() {
-        return mPersonEvents;
     }
 }
