@@ -259,6 +259,30 @@ public class Model {
         return options;
     }
 
+    public PolylineOptions getLifeStoryLine(String eventID){
+        Log.d(TAG,"getLifeStoryLine(String) called");
+
+        if (!mLineDrawn.get(lifeStoryLines)){
+            return null;
+        }
+
+        String personID = mEvents.get(eventID).getPersonID();
+        int lineColor = COLORS[mLineColorInds.get(lifeStoryLines)];
+
+        PolylineOptions options = new PolylineOptions();
+        options.color(lineColor);
+
+        for (Event event : mPersonEvents.get(personID)) {
+            if (!isEventFiltered(event)) {
+                options.add(
+                        new LatLng(event.getLatitude(), event.getLongitude())
+                );
+            }
+        }
+
+        return options;
+    }
+
     public PolylineOptions[] getFamilyHistoryLines(String eventID){
         Log.d(TAG,"getFamilyHistoryLines(String) called");
 
@@ -274,29 +298,6 @@ public class Model {
         recursiveFamilyHistoryHelper(optionsArrayList,event.getPersonID(),position,10F);
 
         return optionsArrayList.toArray(new PolylineOptions[optionsArrayList.size()]);
-    }
-
-    public PolylineOptions getLifeStoryLine(String eventID){
-        Log.d(TAG,"getLifeStoryLine(String) called");
-
-        if (!mLineDrawn.get(lifeStoryLines)){
-            return null;
-        }
-
-        String personID = mEvents.get(eventID).getPersonID();
-        int lineColor = COLORS[mLineColorInds.get(lifeStoryLines)];
-
-        PolylineOptions options = new PolylineOptions();
-        options.color(lineColor);
-
-        for (Event event : mPersonEvents.get(personID)) {
-            //TODO Add filtering
-            options.add(
-                    new LatLng(event.getLatitude(),event.getLongitude())
-            );
-        }
-
-        return options;
     }
 
     private void recursiveFamilyHistoryHelper(ArrayList<PolylineOptions> optionsArrayList,
@@ -342,9 +343,9 @@ public class Model {
 
         Set<Event> personEvents = mPersonEvents.get(personID);
         for (Event event : personEvents) {
-            //TODO Filter events
-            LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
-            return position;
+            if (!isEventFiltered(event)) {
+                return new LatLng(event.getLatitude(), event.getLongitude());
+            }
         }
         return null;
     }

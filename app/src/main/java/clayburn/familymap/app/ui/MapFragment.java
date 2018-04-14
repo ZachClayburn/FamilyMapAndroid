@@ -392,7 +392,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             drawEventsOnMap();
             if (mSelectedEventID != null) {
                 if (mMarkers.stream().noneMatch(
-                        marker -> mSelectedEventID.equals(marker.getId()))) {
+                        marker -> mSelectedEventID.equals(marker.getTag()))) {
                     deSelect(null);
                 }else {
                     drawRelationLines();
