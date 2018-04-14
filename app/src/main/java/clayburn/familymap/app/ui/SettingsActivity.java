@@ -1,10 +1,12 @@
 package clayburn.familymap.app.ui;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -225,8 +227,11 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         mFragment.setOptionName(R.string.option_name_log_out);
         mFragment.setOptionDetail(R.string.option_detail_log_out);
 
-        mFragment.setClickAction(() ->//TODO Set this up correctly
-                Toast.makeText(SettingsActivity.this,"Log out clicked",Toast.LENGTH_SHORT).show());
+        mFragment.setClickAction(() ->{
+            Model.reset();
+            
+            finish();
+        });
     }
 
     @Override

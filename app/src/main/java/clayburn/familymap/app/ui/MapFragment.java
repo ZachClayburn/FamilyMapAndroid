@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import clayburn.familymap.app.R;
 import clayburn.familymap.model.Model;
@@ -45,16 +46,21 @@ import clayburn.familymap.model.Model;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String SELECTED_EVENT = "SELECTED_EVENT";
     private static final String TAG = "MAP_FRAGMENT";
+
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String SELECTED_EVENT =
+            "clayburn.familymap.app.ui.MapFragment.selected_event";
+    private static  final String HAS_MENU_BAR =
+            "clayburn.familymap.app.ui.MapFragment.has_menu_bar";
     private static final int PERSON_ACTIVITY_REQUEST_CODE = 0;
     private static final int SETTINGS_ACTIVITY_REQUEST_CODE = 1;
     private static final int FILTER_ACTIVITY_REQUEST_CODE = 2;
 
     private String mSelectedEventID;
     private boolean mInfoLayoutHidden;
-    private ArrayList<Polyline> mPolyLines;
+    private List<Polyline> mPolyLines;
+    private List<Marker> mMarkers;
 
     private OnFragmentInteractionListener mListener;
     private GoogleMap mMap;
@@ -79,6 +85,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      */
     interface OnFragmentInteractionListener {
 
+
+        void restart();
     }
 
 
@@ -94,6 +102,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Bundle args = new Bundle();
         if (eventID != null) {
             args.putString(SELECTED_EVENT, eventID);
+            args.putBoolean(HAS_MENU_BAR,false);
             fragment.setArguments(args);
         }
         return fragment;
@@ -102,11 +111,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean hasOptionsMenu = true;
         if (getArguments() != null) {
-            mSelectedEventID = getArguments().getString(SELECTED_EVENT);
-            //TODO Make the Event from arguments selected
+            mSelectedEventID = getArguments().getString(SELECTED_EVENT,null);
+            hasOptionsMenu = getArguments().getBoolean(HAS_MENU_BAR,true);
+            //LOW PRIORITY See if you can fix the detail window
         }
-        setHasOptionsMenu(true);//TODO Disable this from the EventActivity
+        setHasOptionsMenu(hasOptionsMenu);
     }
 
     @Override
@@ -173,19 +184,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
 
         mMap.setOnMarkerClickListener(this::selectEventMarker);
+
+        if (mSelectedEventID != null) {
+            mMarkers.stream()
+                    .filter(marker -> mSelectedEventID.equals(marker.getTag()))
+                    .findFirst()
+                    .ifPresent(this::selectEventMarker);
+        }
+
     }
 
     private void drawEventsOnMap(){
+
+        mMarkers = new ArrayList<>();
 
         for(String eventID : Model.get().getEventIDSet()){
 
             LatLng position = Model.get().getEventLocation(eventID);
             float color = Model.get().getEventColor(eventID);
             BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(color);
-            mMap.addMarker(new MarkerOptions()
+            Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(position)
                     .icon(icon)
-            ).setTag(eventID);
+            );
+            marker.setTag(eventID);
+            mMarkers.add(marker);
         }
     }
 

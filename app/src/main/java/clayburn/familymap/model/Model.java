@@ -26,15 +26,15 @@ public class Model {
 
     private static final String TAG = "MODEL";
 
-    public static final String LIFE_STORY_LINES = "Life Story Lines";
-    public static final String FAMILY_TREE_LINES = "Family Trees Lines";
-    public static final String SPOUSE_LINES = "Spouse Lines";
-
-    private int mSpouseLineColor = 0XFFB71C1C;
-    private int mFamilyTreeLineColor = 0XFF1A237E;
-    private int mLifeStoryLineColor = 0XFF64DD17;
-
     private static Model sModel;
+
+    /**
+     * Reset all information, Only to be used at logout
+     */
+    public static void reset() {
+        sModel = new Model();
+    }
+
 
     private Model(){
         mPersons = new HashMap<>();
@@ -198,35 +198,7 @@ public class Model {
     //TODO Add female events filter
     //TODO Add male events filter
 
-
-    //Unorganized Mess------------------------------------------------------------------------------
-    //TODO Fix this
-
-    /**
-     * Get the real name of the logged in user. Retrieves the first and last name of the currently
-     * logged in user from the data retried from the server and concatanates them into a string
-     * @return A string of the format [firstName lastName] of the Person object representing the
-     * currently logged in user
-     */
-    public String getUsersRealName(){
-        return getPersonFullName(mUserPersonID);
-    }
-
-    @NonNull
-    public String getPersonFullName(String personID) {
-        String firstName = mPersons.get(personID).getFirstName();
-        String lastName = mPersons.get(personID).getLastName();
-
-        return firstName + " " + lastName;
-    }
-
-    /**
-     * Get the eventIDs used to acquire more data from the model
-     * @return A set containing all the eventID properties of the Event objects saved in the Model
-     */
-    public Set<String> getEventIDSet(){
-        return mEvents.keySet();
-    }
+    //Line Methods----------------------------------------------------------------------------------
 
     /**
      * Get the location of the Event with the given <code>eventID</code>
@@ -236,50 +208,6 @@ public class Model {
     public LatLng getEventLocation(String eventID){
         Event event = mEvents.get(eventID);
         return new LatLng(event.getLatitude(),event.getLongitude());
-    }
-
-    /**
-     * Get a float representing the hue value of the events color.
-     * @param eventID The eventID of the Event who's color you desire
-     * @return A hue value float of the Event's color.
-     */
-    public float getEventColor(String eventID){
-        return mEventColors.get(mEvents
-                        .get(eventID)
-                        .getEventType()
-        );
-    }
-
-    /**
-     * Return the name of the Person who owns the given event
-     * @param personID The personID of the Event you are checking
-     * @return The first and last name of the person who the event belongs to formatted as a string
-     */
-    public String getPersonName(String personID){
-        Person person = mPersons.get(personID);
-        return person.getFirstName() + " " + person.getLastName();
-    }
-
-    public String getEventPersonID(String eventID){
-        return mEvents.get(eventID).getPersonID();
-    }
-
-    /**
-     * Get the information of an event formatted as a string
-     * @param eventID The eventID of the Event you want information on
-     * @return A string containing the event type, event location and event year
-     */
-    public String getEventInfo(String eventID){
-        Event event = mEvents.get(eventID);
-        return event.getEventType() +
-                ": " +
-                event.getCity() +
-                ", " +
-                event.getCountry() +
-                " (" +
-                event.getYear() +
-                ")";
-
     }
 
     public PolylineOptions getSpouseLine(String eventID){
@@ -326,6 +254,29 @@ public class Model {
         recursiveFamilyHistoryHelper(optionsArrayList,event.getPersonID(),position,10F);
 
         return optionsArrayList.toArray(new PolylineOptions[optionsArrayList.size()]);
+    }
+
+    public PolylineOptions getLifeStoryLine(String eventID){
+        Log.d(TAG,"getLifeStoryLine(String) called");
+
+        if (!mLineDrawn.get(lifeStoryLines)){
+            return null;
+        }
+
+        String personID = mEvents.get(eventID).getPersonID();
+        int lineColor = COLORS[mLineColorInds.get(lifeStoryLines)];
+
+        PolylineOptions options = new PolylineOptions();
+        options.color(lineColor);
+
+        for (Event event : mPersonEvents.get(personID)) {
+            //TODO Add filtering
+            options.add(
+                    new LatLng(event.getLatitude(),event.getLongitude())
+            );
+        }
+
+        return options;
     }
 
     private void recursiveFamilyHistoryHelper(ArrayList<PolylineOptions> optionsArrayList,
@@ -378,27 +329,79 @@ public class Model {
         return null;
     }
 
-    public PolylineOptions getLifeStoryLine(String eventID){
-        Log.d(TAG,"getLifeStoryLine(String) called");
 
-        if (!mLineDrawn.get(lifeStoryLines)){
-            return null;
-        }
 
-        String personID = mEvents.get(eventID).getPersonID();
-        int lineColor = COLORS[mLineColorInds.get(lifeStoryLines)];
+    //Unorganized Mess------------------------------------------------------------------------------
+    //TODO Fix this
 
-        PolylineOptions options = new PolylineOptions();
-        options.color(lineColor);
+    /**
+     * Get the real name of the logged in user. Retrieves the first and last name of the currently
+     * logged in user from the data retried from the server and concatanates them into a string
+     * @return A string of the format [firstName lastName] of the Person object representing the
+     * currently logged in user
+     */
+    public String getUsersRealName(){
+        return getPersonFullName(mUserPersonID);
+    }
 
-        for (Event event : mPersonEvents.get(personID)) {
-            //TODO Add filtering
-            options.add(
-                    new LatLng(event.getLatitude(),event.getLongitude())
-            );
-        }
+    @NonNull
+    public String getPersonFullName(String personID) {
+        String firstName = mPersons.get(personID).getFirstName();
+        String lastName = mPersons.get(personID).getLastName();
 
-        return options;
+        return firstName + " " + lastName;
+    }
+
+    /**
+     * Get the eventIDs used to acquire more data from the model
+     * @return A set containing all the eventID properties of the Event objects saved in the Model
+     */
+    public Set<String> getEventIDSet(){
+        return mEvents.keySet();
+    }
+
+    /**
+     * Get a float representing the hue value of the events color.
+     * @param eventID The eventID of the Event who's color you desire
+     * @return A hue value float of the Event's color.
+     */
+    public float getEventColor(String eventID){
+        return mEventColors.get(mEvents
+                        .get(eventID)
+                        .getEventType()
+        );
+    }
+
+    /**
+     * Return the name of the Person who owns the given event
+     * @param personID The personID of the Event you are checking
+     * @return The first and last name of the person who the event belongs to formatted as a string
+     */
+    public String getPersonName(String personID){
+        Person person = mPersons.get(personID);
+        return person.getFirstName() + " " + person.getLastName();
+    }
+
+    public String getEventPersonID(String eventID){
+        return mEvents.get(eventID).getPersonID();
+    }
+
+    /**
+     * Get the information of an event formatted as a string
+     * @param eventID The eventID of the Event you want information on
+     * @return A string containing the event type, event location and event year
+     */
+    public String getEventInfo(String eventID){
+        Event event = mEvents.get(eventID);
+        return event.getEventType() +
+                ": " +
+                event.getCity() +
+                ", " +
+                event.getCountry() +
+                " (" +
+                event.getYear() +
+                ")";
+
     }
 
     public String getUserPersonID() {
@@ -476,10 +479,6 @@ public class Model {
 
     public boolean isMale(String personID){
         return mPersons.get(personID).getGender().equals("m");
-    }
-
-    public Map<String, Float> getEventColors() {
-        return mEventColors;
     }
 
     public String getAuthToken() {

@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements
         if (mFragment == null) {
             if (Model.get().getUserPersonID() == null) {
                 mFragment = new LoginRegisterFragment();
+
             } else {
                 mFragment = MapFragment.newInstance(null);
             }
@@ -51,5 +52,10 @@ public class MainActivity extends AppCompatActivity implements
         } catch (Exception e){
             Log.e(TAG,e.getLocalizedMessage(),e);
         }
+    }
+
+    @Override
+    public void restart() {
+        recreate();
     }
 }

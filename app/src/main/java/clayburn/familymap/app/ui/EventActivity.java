@@ -46,4 +46,9 @@ public class EventActivity extends AppCompatActivity implements MapFragment.OnFr
                     .commit();
         }
     }
+
+    @Override
+    public void restart() {
+        //Do nothing, this is for the MainActivity. Ugly, but it works.
+    }
 }
