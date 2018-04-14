@@ -43,19 +43,25 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoginCompleted() {
-        Fragment mapFragment = MapFragment.newInstance(null);
+        mFragment = MapFragment.newInstance(null);
         try {
             mFragmentManager
                     .beginTransaction()
-                    .replace(R.id.main_activity_fragment_holder, mapFragment)
+                    .replace(R.id.main_activity_fragment_holder, mFragment)
                     .commit();
         } catch (Exception e){
             Log.e(TAG,e.getLocalizedMessage(),e);
         }
     }
 
+    /**
+     * Force the MainActivity to restart
+     */
     @Override
     public void restart() {
+        mFragmentManager.beginTransaction()
+                .remove(mFragment)
+                .commit();
         recreate();
     }
 }

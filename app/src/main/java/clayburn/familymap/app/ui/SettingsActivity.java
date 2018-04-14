@@ -25,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
     private static final String LINE_OPTIONS_HAVE_CHANGED = "clayburn.familymap.app.ui.line_options";
     private static final String MAP_OPTIONS_HAVE_CHANGED ="clayburn.familymap.app.ui.map_options";
     private static final String DATA_WAS_SYNCED = "clayburn.familymap.app.ui.data_options";
+    private static final String LOG_OUT_OCCURRED = "clayburn.familymap.app.ui.log_out_occurred";
 
     private Fragment mLifeStoryFragment;
     private Fragment mFamilyTreeFragment;
@@ -73,6 +74,17 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
 
         return intent != null
                 && intent.getBooleanExtra(DATA_WAS_SYNCED, false);
+    }
+
+    /**
+     * Check if the user logged out in the SettingsActivity
+     * @param intent The intent returned as a result from the SettingsActivity
+     * @return True if the user logged out, false otherwise
+     */
+    public static boolean logOutOccurred(Intent intent){
+
+        return intent != null
+                && intent.getBooleanExtra(LOG_OUT_OCCURRED,false);
     }
 
     @Override
@@ -229,7 +241,9 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
 
         mFragment.setClickAction(() ->{
             Model.reset();
-            
+            Intent data = new Intent();
+            data.putExtra(LOG_OUT_OCCURRED,true);
+            setResult(RESULT_OK,data);
             finish();
         });
     }

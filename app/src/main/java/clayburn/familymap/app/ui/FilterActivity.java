@@ -27,11 +27,24 @@ import clayburn.familymap.model.Model;
 public class FilterActivity extends AppCompatActivity {
 
     private static final String TAG = "FilterActivity";
+    private static final String FILTERS_HAVE_CHANGED
+            = "clayburn.familymap.app.ui.PersonActivity.filters_have_changed";
 
     private RecyclerView mRecyclerView;
 
+    private boolean mFiltersHaveChanged;
+
     public static Intent newIntent(Context packageContext){
         return new Intent(packageContext, FilterActivity.class);
+    }
+
+    /**
+     * Check if the filters changed during the FilterActivity
+     * @param data The Intent returned as a result from the FilterActivity
+     * @return Tru if the
+     */
+    public static boolean filtersHaveChanged(Intent data){
+        return data != null && data.getBooleanExtra(FILTERS_HAVE_CHANGED,false);
     }
 
     @Override
@@ -49,6 +62,12 @@ public class FilterActivity extends AppCompatActivity {
     private List<Filter> getFilters(){
         List<String> list = new ArrayList<>(Model.get().getEventTypes());
         return list.stream().map(Filter::new).collect(Collectors.toList());
+    }
+
+    private void onFilterChanged(){
+        Intent result = new Intent();
+        result.putExtra(FILTERS_HAVE_CHANGED,true);
+        setResult(RESULT_OK,result);
     }
 
     private class FilterListHolder extends RecyclerView.ViewHolder{
@@ -76,11 +95,12 @@ public class FilterActivity extends AppCompatActivity {
                     getString(R.string.filter_details,filter.getFilterName())
             );
 
-            mSwitch.setChecked(
-                    Model.get().isEventDrawn(mFilter.getFilterName())
-            );
-            mSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                    Model.get().setEventFilter(mFilter.getFilterName(),isChecked)
+            mSwitch.setChecked(Model.get().isEventDrawn(mFilter.getFilterName()));
+            mSwitch.setOnCheckedChangeListener(
+                    (buttonView, isChecked) -> {
+                        Model.get().setEventFilter(mFilter.getFilterName(), isChecked);
+                        onFilterChanged();
+                    }
             );
         }
     }
@@ -116,7 +136,7 @@ public class FilterActivity extends AppCompatActivity {
      */
     public class Filter {
 
-        public Filter(String filterName){
+        Filter(String filterName){
             mFilterName = filterName;
         }
 

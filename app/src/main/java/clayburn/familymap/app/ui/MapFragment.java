@@ -22,8 +22,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -85,7 +83,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      */
     interface OnFragmentInteractionListener {
 
-
+        /**
+         * Restart MListener, the activity or fragment hosting the MapFragment
+         */
         void restart();
     }
 
@@ -175,13 +175,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         drawEventsOnMap();
 
-        mMap.setOnMapClickListener(latLng -> {
-            if (!mInfoLayoutHidden){
-                lowerInfoLayout();
-                mSelectedEventID = null;
-            }
-            clearLines();
-        });
+        mMap.setOnMapClickListener(this::deSelect);
 
         mMap.setOnMarkerClickListener(this::selectEventMarker);
 
@@ -194,21 +188,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    private void deSelect(LatLng latLng){
+        //Low Priority mInfoLayoutHidden is equivalent to mSelectedEventID != null
+        if (!mInfoLayoutHidden){
+            lowerInfoLayout();
+            mSelectedEventID = null;
+        }
+        clearLines();
+    }
+
     private void drawEventsOnMap(){
 
+        if (mMarkers != null) {
+            for (Marker oldMarker : mMarkers){
+                oldMarker.remove();
+            }
+        }
         mMarkers = new ArrayList<>();
 
-        for(String eventID : Model.get().getEventIDSet()){
+        for(String eventID : Model.get().getEventIDIterable()){
 
-            LatLng position = Model.get().getEventLocation(eventID);
-            float color = Model.get().getEventColor(eventID);
-            BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(color);
-            Marker marker = mMap.addMarker(new MarkerOptions()
-                    .position(position)
-                    .icon(icon)
-            );
-            marker.setTag(eventID);
-            mMarkers.add(marker);
+            MarkerOptions options = Model.get().getMarkerOption(eventID);
+            if (options != null) {
+                Marker marker = mMap.addMarker(options);
+                marker.setTag(eventID);
+                mMarkers.add(marker);
+            }
         }
     }
 
@@ -256,6 +261,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    private void clearLines(){
+
+        for (Polyline polyline : mPolyLines){
+            polyline.remove();
+        }
+        mPolyLines.clear();
+    }
+
     private void lowerInfoLayout(){
         float end = mInfoLayout.getTop();
         float start = end - mInfoLayout.getHeight();
@@ -264,14 +277,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .start();
         mInfoLayoutHidden = !mInfoLayoutHidden;
 
-    }
-
-    private void clearLines(){
-
-        for (Polyline polyline : mPolyLines){
-            polyline.remove();
-        }
-        mPolyLines.clear();
     }
 
     private void raiseInfoLayout(){
@@ -355,10 +360,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             case SETTINGS_ACTIVITY_REQUEST_CODE:{
                 handleSettingsActivityResult(data);
             }
+            case FILTER_ACTIVITY_REQUEST_CODE:{
+                handleFilterActivityResult(data);
+            }
         }
     }
 
     private void handleSettingsActivityResult(Intent data){
+        if (SettingsActivity.logOutOccurred(data)){
+            mListener.restart();
+            return;
+        }
         if (SettingsActivity.dataWasSynced(data)){
             clearLines();
             mMap.clear();
@@ -372,6 +384,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
         if (SettingsActivity.mapOptionsHaveChanged(data)){
             mMap.setMapType(Model.get().getCurrentMapType());
+        }
+    }
+
+    private void handleFilterActivityResult(Intent data){
+        if (FilterActivity.filtersHaveChanged(data)){
+            drawEventsOnMap();
+            if (mSelectedEventID != null) {
+                if (mMarkers.stream().noneMatch(
+                        marker -> mSelectedEventID.equals(marker.getId()))) {
+                    deSelect(null);
+                }else {
+                    drawRelationLines();
+                }
+            }
         }
     }
 }

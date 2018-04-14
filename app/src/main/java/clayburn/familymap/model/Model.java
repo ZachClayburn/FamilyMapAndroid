@@ -5,7 +5,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -95,7 +98,7 @@ public class Model {
         mEventColors = new HashMap<>();
         for(String eventType : mEventTypes){
             mEventColors.put(eventType,currentColor);
-            mEventFilters.put(eventType,true);
+            mEventTypeFilters.put(eventType,true);
             currentColor += colorStep;
         }
     }
@@ -174,11 +177,11 @@ public class Model {
     //Filter Setting methods------------------------------------------------------------------------
 
     private Set<String> mEventTypes;
-    private Map<String, Boolean> mEventFilters;
+    private Map<String, Boolean> mEventTypeFilters;
 
     private void initFilterSettings(){
         mEventTypes = new HashSet<>();
-        mEventFilters = new HashMap<>();
+        mEventTypeFilters = new HashMap<>();
     }
 
     public Set<String> getEventTypes() {
@@ -186,11 +189,15 @@ public class Model {
     }
 
     public void setEventFilter(String eventType, Boolean isDrawn){
-        mEventFilters.replace(eventType,isDrawn);
+        mEventTypeFilters.replace(eventType,isDrawn);
     }
 
     public boolean isEventDrawn(String eventType){
-        return mEventFilters.get(eventType) != null && mEventFilters.get(eventType);
+        return mEventTypeFilters.get(eventType) != null && mEventTypeFilters.get(eventType);
+    }
+
+    private boolean isEventFiltered(Event event){
+        return (!mEventTypeFilters.get(event.getEventType()));
     }
     //TODO Actually use this info to filter events
     //TODO Add Mother's side filter
@@ -198,16 +205,29 @@ public class Model {
     //TODO Add female events filter
     //TODO Add male events filter
 
-    //Line Methods----------------------------------------------------------------------------------
+    //Line and Marker Methods-----------------------------------------------------------------------
 
     /**
-     * Get the location of the Event with the given <code>eventID</code>
+     * Get the MarkerOptions to draw a marker for the Event with the given <code>eventID</code>
      * @param eventID The eventID of the Event who's location you desire
-     * @return A LatLng with the coordinates of the given Event's location
+     * @return A MarkerOptions for the given Event's location, or null if the Event is filtered
      */
-    public LatLng getEventLocation(String eventID){
+    @Nullable
+    public MarkerOptions getMarkerOption(String eventID){
+
         Event event = mEvents.get(eventID);
-        return new LatLng(event.getLatitude(),event.getLongitude());
+        if (isEventFiltered(event)){
+            return null;
+        }
+
+        float color = mEventColors.get(event.getEventType());
+        BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(color);
+
+        LatLng location = new LatLng(event.getLatitude(),event.getLongitude());
+
+        return new MarkerOptions()
+                .position(location)
+                .icon(icon);
     }
 
     public PolylineOptions getSpouseLine(String eventID){
@@ -332,7 +352,7 @@ public class Model {
 
 
     //Unorganized Mess------------------------------------------------------------------------------
-    //TODO Fix this
+    //Low Priority Fix this
 
     /**
      * Get the real name of the logged in user. Retrieves the first and last name of the currently
@@ -356,20 +376,8 @@ public class Model {
      * Get the eventIDs used to acquire more data from the model
      * @return A set containing all the eventID properties of the Event objects saved in the Model
      */
-    public Set<String> getEventIDSet(){
+    public Iterable<String> getEventIDIterable(){
         return mEvents.keySet();
-    }
-
-    /**
-     * Get a float representing the hue value of the events color.
-     * @param eventID The eventID of the Event who's color you desire
-     * @return A hue value float of the Event's color.
-     */
-    public float getEventColor(String eventID){
-        return mEventColors.get(mEvents
-                        .get(eventID)
-                        .getEventType()
-        );
     }
 
     /**
@@ -418,9 +426,9 @@ public class Model {
         Set<Event> events = mPersonEvents.get(peronID);
 
         for (Event event : events) {
-            listItems.add(
-                    new ListEvent(event.getEventID())
-            );
+            if (!isEventFiltered(event)) {
+                listItems.add(new ListEvent(event.getEventID()));
+            }
         }
 
         return listItems;
