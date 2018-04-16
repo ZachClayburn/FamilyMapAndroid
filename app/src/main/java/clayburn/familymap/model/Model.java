@@ -18,8 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import clayburn.familymap.app.ui.FilterActivity;
 
 import static clayburn.familymap.model.Model.LineName.*;
 
@@ -179,10 +182,14 @@ public class Model {
 
     private Set<String> mEventTypes;
     private Map<String, Boolean> mEventTypeFilters;
+    private boolean mMaleFilter;
+    private boolean mFemaleFilter;
 
     private void initFilterSettings(){
         mEventTypes = new HashSet<>();
         mEventTypeFilters = new HashMap<>();
+        mMaleFilter = true;
+        mFemaleFilter = true;
     }
 
     public Set<String> getEventTypes() {
@@ -193,18 +200,36 @@ public class Model {
         mEventTypeFilters.replace(eventType,isDrawn);
     }
 
+    public void setGenderFilter(boolean isMale, boolean isDrawn){
+        if (isMale) {
+            mMaleFilter = isDrawn;
+        } else {
+            mFemaleFilter = isDrawn;
+        }
+    }
+
     public boolean isEventDrawn(String eventType){
         return mEventTypeFilters.get(eventType) != null && mEventTypeFilters.get(eventType);
     }
 
-    private boolean isEventFiltered(Event event){
-        return (!mEventTypeFilters.get(event.getEventType()));
+    public boolean isEventDrawn(boolean isMale){
+        if (isMale) {
+            return mMaleFilter;
+        } else {
+            return mFemaleFilter;
+        }
     }
-    //TODO Actually use this info to filter events
+
+    private boolean isEventFiltered(Event event){
+        if (!mEventTypeFilters.get(event.getEventType())){
+            return true;
+        }
+        Person person = mPersons.get(event.getPersonID());
+        return isMale(person.getPersonID()) ?
+                !mMaleFilter : !mFemaleFilter;
+    }
     //TODO Add Mother's side filter
     //TODO Add Father's side filter
-    //TODO Add female events filter
-    //TODO Add male events filter
 
     //Line and Marker Methods-----------------------------------------------------------------------
 
@@ -376,22 +401,28 @@ public class Model {
         Predicate<Person> isParent;
 
         //Get Parents
-        relationID = person.getFather();
-        if (relationID != null) {
-            listPerson = new ListPerson(relationID,ListPerson.PARENT);
-            listItems.add(listPerson);
+        if (isEventDrawn(true)) {
+            relationID = person.getFather();
+            if (relationID != null) {
+                listPerson = new ListPerson(relationID,ListPerson.PARENT);
+                listItems.add(listPerson);
+            }
         }
-        relationID = person.getMother();
-        if (relationID != null) {
-            listPerson = new ListPerson(relationID,ListPerson.PARENT);
-            listItems.add(listPerson);
+        if (isEventDrawn(false)) {
+            relationID = person.getMother();
+            if (relationID != null) {
+                listPerson = new ListPerson(relationID,ListPerson.PARENT);
+                listItems.add(listPerson);
+            }
         }
 
         //Get Spouse
         relationID = person.getSpouse();
         if (relationID != null) {
-            listPerson = new ListPerson(relationID,ListPerson.SPOUSE);
-            listItems.add(listPerson);
+            if (isEventDrawn(isMale(relationID))) {
+                listPerson = new ListPerson(relationID,ListPerson.SPOUSE);
+                listItems.add(listPerson);
+            }
         }
 
         //Get Children
@@ -404,16 +435,13 @@ public class Model {
             }break;
         }
 
-        for (String id : mPersons.keySet()) {
-            Person p = mPersons.get(id);
-            if (p == null)
-                continue;
-            if (isParent.test(p)){
-                listPerson = new ListPerson(id, ListPerson.CHILD);
-                listItems.add(listPerson);
-                break;
-            }
-        }
+        mPersons.values().stream()
+                .filter(isParent)
+                .map(Person::getPersonID)
+                .filter(pid -> isEventDrawn(isMale(pid)))
+                .findFirst()
+                .ifPresent(id -> listItems.add(new ListPerson(id, ListPerson.CHILD)));
+
 
         return listItems;
     }
@@ -431,27 +459,31 @@ public class Model {
                 .filter(event -> eventSearchHelper(event, searchString))
                 .map(event -> new ListEvent(event.getEventID()))
                 .collect(Collectors.toList());
-        group = new ExpandingGroup(ExpandingGroup.EVENT_GROUP_TITLE,contentList);
-        list.add(group);
+        if (!contentList.isEmpty()) {
+            group = new ExpandingGroup(ExpandingGroup.EVENT_GROUP_TITLE, contentList);
+            list.add(group);
+        }
 
         contentList = mPersons.values().stream()
                 .filter(person -> personSearchHelper(person,searchString))
                 .map(person -> new ListPerson(person.getPersonID(),ListPerson.NO_RELATION))
                 .collect(Collectors.toList());
-        group = new ExpandingGroup(ExpandingGroup.PERSON_GROUP_TITLE,contentList);
-        list.add(group);
+        if (!contentList.isEmpty()) {
+            group = new ExpandingGroup(ExpandingGroup.PERSON_GROUP_TITLE, contentList);
+            list.add(group);
+        }
 
         return list;
     }
 
     private boolean eventSearchHelper(Event event, String searchString){
         String s = searchString.toLowerCase();
-        return !isEventFiltered(event) &&
-        event.getCity().toLowerCase().contains(s) ||
+        return !isEventFiltered(event) && (
+                event.getCity().toLowerCase().contains(s) ||
                 event.getCountry().toLowerCase().contains(s) ||
                 event.getYear().toLowerCase().contains(s) ||
                 event.getEventType().toLowerCase().contains(s) ||
-                getPersonName(getEventPersonID(event.getEventID())).toLowerCase().contains(s);
+                getPersonName(getEventPersonID(event.getEventID())).toLowerCase().contains(s));
     }
 
     private boolean personSearchHelper(Person person, String searchString){

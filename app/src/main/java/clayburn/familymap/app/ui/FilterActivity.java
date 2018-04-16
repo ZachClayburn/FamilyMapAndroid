@@ -9,10 +9,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -27,8 +24,13 @@ import clayburn.familymap.model.Model;
 public class FilterActivity extends AppCompatActivity {
 
     private static final String TAG = "FilterActivity";
-    private static final String FILTERS_HAVE_CHANGED
-            = "clayburn.familymap.app.ui.PersonActivity.filters_have_changed";
+    private static final String FILTERS_HAVE_CHANGED =
+            "clayburn.familymap.app.ui.PersonActivity.filters_have_changed";
+    private static final String GENDER_FILTER_MALE =
+            "clayburn.familymap.app.ui.SearchActivity.gender_filter_male";
+    private static final String GENDER_FILTER_FEMALE =
+            "clayburn.familymap.app.ui.SearchActivity.gender_filter_female";
+
 
     private RecyclerView mRecyclerView;
 
@@ -60,7 +62,10 @@ public class FilterActivity extends AppCompatActivity {
     }
 
     private List<Filter> getFilters(){
-        List<String> list = new ArrayList<>(Model.get().getEventTypes());
+        List<String> list = new ArrayList<>();
+        list.add(GENDER_FILTER_MALE);
+        list.add(GENDER_FILTER_FEMALE);
+        list.addAll(Model.get().getEventTypes());
         return list.stream().map(Filter::new).collect(Collectors.toList());
     }
 
@@ -86,7 +91,7 @@ public class FilterActivity extends AppCompatActivity {
             mSwitch = itemView.findViewById(R.id.option_switch);
         }
 
-        void onBind(Filter filter){
+        void bindEventFilter(Filter filter){
             mFilter = filter;
             mFilterName.setText(
                     getString(R.string.filter_name,filter.getFilterName())
@@ -102,6 +107,28 @@ public class FilterActivity extends AppCompatActivity {
                         onFilterChanged();
                     }
             );
+        }
+
+        void bindGenderFilter(Filter filter, boolean isMale){
+            mFilter = filter;
+            String gender = isMale ?
+                    getString(R.string.male_text) : getString(R.string.female_text);
+
+            mFilterName.setText(
+                    getString(R.string.filter_name,gender)
+            );
+            mFilterDetail.setText(
+                    getString(R.string.filter_details,gender)
+            );
+
+            mSwitch.setChecked(Model.get().isEventDrawn(isMale));
+            mSwitch.setOnCheckedChangeListener(
+                    (buttonView, isChecked) -> {
+                        Model.get().setGenderFilter(isMale, isChecked);
+                        onFilterChanged();
+                    }
+            );
+
         }
     }
 
@@ -122,7 +149,18 @@ public class FilterActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull FilterListHolder holder, int position) {
-            holder.onBind(mFilters.get(position));
+            Filter filter = mFilters.get(position);
+            switch (filter.getFilterName()){
+                case GENDER_FILTER_FEMALE:{
+                    holder.bindGenderFilter(filter, false);
+                }break;
+                case GENDER_FILTER_MALE:{
+                    holder.bindGenderFilter(filter, true);
+                }break;
+                default:{
+                    holder.bindEventFilter(filter);
+                }
+            }
         }
 
         @Override
@@ -131,10 +169,7 @@ public class FilterActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * A class that will hold the data for an individual filter switch in the list
-     */
-    public class Filter {
+    private class Filter {
 
         Filter(String filterName){
             mFilterName = filterName;

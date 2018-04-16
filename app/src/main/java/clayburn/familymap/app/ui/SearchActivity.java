@@ -57,6 +57,12 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
+        mSearchView.setOnCloseListener(() -> {
+            if (mRecyclerView != null) {
+                mRecyclerView.swapAdapter(null,true);
+            }
+            return false;
+        });
     }
 
     private ExpandableListAdapter GetSearchResults(String query){
