@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import clayburn.familymap.app.R;
+import clayburn.familymap.app.network.DataFetchTask;
 import clayburn.familymap.app.ui.menuItems.MenuFragment;
 import clayburn.familymap.app.ui.menuItems.SpinnerFragment;
 import clayburn.familymap.app.ui.menuItems.SpinnerSwitchFragment;
@@ -19,7 +20,8 @@ import clayburn.familymap.model.Model;
 
 import static clayburn.familymap.model.Model.LineName.*;
 
-public class SettingsActivity extends AppCompatActivity implements MenuFragment.OnFragmentInteractionListener{
+public class SettingsActivity extends AppCompatActivity implements
+        MenuFragment.OnFragmentInteractionListener, DataFetchTask.DataFetchCaller{
 
     private static final String TAG = "SettingsActivity";
     private static final String LINE_OPTIONS_HAVE_CHANGED = "clayburn.familymap.app.ui.line_options";
@@ -231,8 +233,12 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         mFragment.setOptionDetail(R.string.option_detail_sync_data);
         mFragment.setSource(DATA_WAS_SYNCED);
 
-        mFragment.setClickAction(() ->//TODO Set this up correctly
-                Toast.makeText(SettingsActivity.this,"Sync clicked",Toast.LENGTH_SHORT).show());
+        mFragment.setClickAction(() ->{
+                new DataFetchTask(this,
+                        Model.get().getServerHost(),
+                        Model.get().getServerPort())
+                        .execute(Model.get().getAuthToken());
+        });
 
         //Log out options
         mFragment = (MenuFragment) mLogOutFragment;
@@ -266,5 +272,25 @@ public class SettingsActivity extends AppCompatActivity implements MenuFragment.
         data.putExtra(MAP_OPTIONS_HAVE_CHANGED,mMapOptionsHaveChanged);
         data.putExtra(DATA_WAS_SYNCED,mDataWasSynced);
         setResult(RESULT_OK,data);
+    }
+
+    /**
+     * This method will be called by the DataFetchTask on the object that created it when the
+     * transaction with the server is completed Successfully.
+     */
+    @Override
+    public void onDataFetchSuccess() {
+        Toast.makeText(this, R.string.sync_success,Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * This method will be called by the DataFetchTask on the object that created it if the
+     * transaction with the server fails
+     *
+     * @param message A message describing the error
+     */
+    @Override
+    public void onDataFetchFailure(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

@@ -166,7 +166,7 @@ public class LoginRegisterFragment
                     mGender
             );
             new RegisterTask(LoginRegisterFragment.this).execute(params);
-            //TODO Add a working indicator
+            //Low Priority Add a working indicator
         });
 
         mLogInButton = view.findViewById(R.id.log_in_button);
@@ -183,7 +183,7 @@ public class LoginRegisterFragment
                     mPassword
             );
             new LogInTask(LoginRegisterFragment.this).execute(params);
-            //TODO Add a working indicator
+            //Low Priority Add a working indicator
         });
 
 
@@ -277,6 +277,8 @@ public class LoginRegisterFragment
 
             Model.get().setAuthToken(loginResponse.getAuthToken());
             Model.get().setUserPersonID(loginResponse.getPersonID());
+            Model.get().setServerHost(mServerHost);
+            Model.get().setServerPort(mServerPort);
 
             new DataFetchTask(this,mServerHost,mServerPort)
                     .execute(loginResponse.getAuthToken());

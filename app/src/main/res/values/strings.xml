@@ -48,6 +48,7 @@
     <string name="option_detail_sync_data">Re-download FamilyMap data from servers</string>
     <string name="option_name_log_out">Log Out</string>
     <string name="option_detail_log_out">Return to the Log in Screen</string>
+    <string name="sync_success">Sync was a success!</string>
 
     <!-- EventActivity Strings -->
     <string name="title_activity_event">Event</string>

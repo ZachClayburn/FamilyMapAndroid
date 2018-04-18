@@ -18,11 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import clayburn.familymap.app.ui.FilterActivity;
 
 import static clayburn.familymap.model.Model.LineName.*;
 
@@ -69,9 +66,6 @@ public class Model {
     private Map<String, Set<Event>> mPersonEvents;
     private Map<String,Float> mEventColors;
 
-    private String mAuthToken;
-    private String mUserPersonID;
-
     /**
      * Processes the information from the server and populates the Model with the information in the
      * form needed for the app.
@@ -79,12 +73,15 @@ public class Model {
      * @param events All of the Events linked to Persons belonging to the user
      */
     public void populateModel(Person[] persons, Event[] events){
-        //TODO Finish this method
 
+        mPersons.clear();
         for (Person person : persons) {
             mPersons.put(person.getPersonID(),person);
         }
 
+        mEvents.clear();
+        mEventTypes.clear();
+        mPersonEvents.clear();
         for (Event event : events) {
             mEvents.put(event.getEventID(),event);
 
@@ -376,6 +373,14 @@ public class Model {
         return null;
     }
 
+    /**
+     * Get the eventIDs used to acquire more data from the model
+     * @return A set containing all the eventID properties of the Event objects saved in the Model
+     */
+    public Iterable<String> getEventIDIterable(){
+        return mEvents.keySet();
+    }
+
     //Person Activity Methods-----------------------------------------------------------------------
 
     public List<ExpandableListItem> getEventList(String peronID){
@@ -493,21 +498,33 @@ public class Model {
                 person.getLastName().toLowerCase().contains(s);
     }
 
-    //Unorganized Mess------------------------------------------------------------------------------
-    //Low Priority Fix this
+    //Misc Data Methods------------------------------------------------------------------------------
+
+    private String mAuthToken;
+    private String mUserPersonID;
+    private String mServerHost;
+    private int mServerPort;
+
+    public String getServerHost() {
+        return mServerHost;
+    }
+
+    public void setServerHost(String serverHost) {
+        mServerHost = serverHost;
+    }
+
+    public int getServerPort() {
+        return mServerPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        mServerPort = serverPort;
+    }
 
     @NonNull
     public String getPersonName(String personID) {
         Person person = mPersons.get(personID);
         return person.getFirstName() + " " + person.getLastName();
-    }
-
-    /**
-     * Get the eventIDs used to acquire more data from the model
-     * @return A set containing all the eventID properties of the Event objects saved in the Model
-     */
-    public Iterable<String> getEventIDIterable(){
-        return mEvents.keySet();
     }
 
     public String getEventPersonID(String eventID){
